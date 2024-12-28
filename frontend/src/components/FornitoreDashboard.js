@@ -9,12 +9,16 @@ import {
 import axios from '../utils/axiosConfig';
 import { useParams } from 'react-router-dom';
 import KanbanCard from './KanbanCard';
+import QrScanner from 'react-qr-scanner';
 
 const FornitoreDashboard = () => {
     const { fornitoreId } = useParams();
     const [kanbanList, setKanbanList] = useState([]);
     const toast = useToast();
     const [groupedKanban, setGroupedKanban] = useState({});
+    const [scanning, setScanning] = useState(false);
+    const [scanResult, setScanResult] = useState('');
+
 
     useEffect(() => {
         const fetchKanban = async () => {
@@ -35,16 +39,21 @@ const FornitoreDashboard = () => {
         fetchKanban();
     }, [fornitoreId, toast]);
 
-    useEffect(() => {
+
+     useEffect(() => {
         // Raggruppa i cartellini per codice prodotto
         const grouped = kanbanList.reduce((acc, kanban) => {
-            const prodottoCodice = kanban.prodotto.descrizione;
+            const prodottoCodice = kanban.prodotto?.descrizione;
             if (!acc[prodottoCodice]) {
                 acc[prodottoCodice] = [];
             }
-            acc[prodottoCodice].push(kanban);
+           if (kanban.stato === 'Svuotato'){
+               acc[prodottoCodice].push(kanban);
+            }
+
             return acc;
         }, {});
+
 
         // Ordina i cartellini di ogni gruppo, mettendo prima quelli svuotati
         for (const prodottoCodice in grouped) {
@@ -60,11 +69,10 @@ const FornitoreDashboard = () => {
 
         setGroupedKanban(grouped);
     }, [kanbanList]);
-
-    const handleAttivaKanban = async (kanbanId) => {
+      const handleAttivaKanban = async (kanbanId) => {
         try {
-            await axios.put(`/api/kanban/${kanbanId}/stato`, { stato: 'Attivo' });
-           setKanbanList(kanbanList.map(kanban => kanban.id === kanbanId ? { ...kanban, stato: 'Attivo' } : kanban));
+             await axios.put(`/api/kanban/${kanbanId}/stato`, { stato: 'Attivo' });
+            setKanbanList(kanbanList.map(kanban => kanban.id === kanbanId ? { ...kanban, stato: 'Attivo' } : kanban));
             toast({
                title: 'Kanban reso attivo',
                status: 'success',
@@ -82,12 +90,44 @@ const FornitoreDashboard = () => {
         }
     };
 
+      const handleScan = (result) => {
+        if (result) {
+           setScanning(false);
+           setScanResult(result.text);
+          //Estraggo l'id del kanban
+          const idKanban = result.text.split(":")[1]
+           if (idKanban) {
+               handleAttivaKanban(parseInt(idKanban,10));
+           }
+        }
+    };
 
-     return (
+      const handleError = (err) => {
+        console.error(err);
+         toast({
+              title: 'Errore durante la scansione del QR code',
+               description: 'Si è verificato un errore durante la scansione del QR code.',
+              status: 'error',
+              duration: 5000,
+             isClosable: true,
+          });
+      };
+
+    return (
         <Box p={4}>
-            <Heading mb={4}>Dashboard Fornitore</Heading>
-             {Object.keys(groupedKanban).length === 0 ? (
-                    <Box>Nessun kanban trovato</Box>
+          <Heading mb={4}>Dashboard Fornitore</Heading>
+             <Button onClick={() => setScanning(!scanning)} colorScheme="teal" mb={4}>
+                 {scanning ? "Chiudi Scanner" : "Apri Scanner"}
+              </Button>
+             {scanning &&
+                <QrScanner
+                   onError={handleError}
+                   onScan={handleScan}
+                    style={{ width: '100%' }}
+                />
+              }
+              {Object.keys(groupedKanban).length === 0 ? (
+                    <Box>Nessun kanban da ripristinare</Box>
                 ) : (
                     Object.keys(groupedKanban).map((prodottoCodice) => (
                          <Box key={prodottoCodice} mb={6}>

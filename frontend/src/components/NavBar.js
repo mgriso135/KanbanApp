@@ -35,7 +35,7 @@ const NavBar = () => {
             <Flex alignItems={'center'}>
               <Menu>
                 <MenuButton as={Button} colorScheme="teal">
-                  Manage
+                  Aggiungi
                 </MenuButton>
                 <MenuList bg="gray.700">
                  <MenuItem as={Link} to="/clienti-list" bg="gray.700">

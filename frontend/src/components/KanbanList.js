@@ -77,11 +77,11 @@ const KanbanList = () => {
           <Flex mb={4} align="center">
               <Heading>Lista Kanban Attivi</Heading>
                 <Spacer/>
-                   <Link to="/aggiungi-kanban">
-                      <Button colorScheme="teal" mr={2}>Aggiungi Kanban</Button>
-                  </Link>
-             </Flex>
-              <Flex mb={4} align="center">
+                <Link to="/aggiungi-kanban">
+                   <Button colorScheme="teal" mr={2}>Aggiungi Kanban</Button>
+                </Link>
+          </Flex>
+          <Flex mb={4} align="center">
                  <Box mr={2}>
                    <Heading size="md">Filtra per prodotto:</Heading>
                    <Select placeholder="Seleziona un prodotto" value={selectedProdotto} onChange={(e) => setSelectedProdotto(e.target.value)}>

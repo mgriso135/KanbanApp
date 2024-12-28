@@ -130,7 +130,7 @@ def gestisci_kanban():
         return jsonify([{'id': k.id, 'cliente_id': k.cliente_id, 'prodotto_codice': k.prodotto_codice,
                          'fornitore_id': k.fornitore_id, 'quantita': k.quantita, 'tipo_contenitore': k.tipo_contenitore,
                          'stato': k.stato, 'data_aggiornamento': k.data_aggiornamento.isoformat(),
-                         'cliente': {'ragione_sociale': k.cliente.ragione_sociale} if k.cliente else None,
+                          'cliente': {'ragione_sociale': k.cliente.ragione_sociale} if k.cliente else None,
                          'prodotto': {'descrizione': k.prodotto.descrizione} if k.prodotto else None,
                          'fornitore': {'ragione_sociale': k.fornitore.ragione_sociale} if k.fornitore else None
                         } for k in kanban_list])
@@ -149,7 +149,7 @@ def gestisci_kanban():
 
         db.session.commit()
         return jsonify({'message': f'{num_cartellini} Kanban creati con successo', 'ids': created_kanbans}), 201
-@app.route('/api/kanban/<int:kanban_id>', methods=['DELETE'])
+@app.route('/api/kanban/<int:kanban_id>', methods=['PUT','DELETE'])
 def modifica_kanban(kanban_id):
     if request.method == 'PUT':
       data = request.get_json()
@@ -170,7 +170,7 @@ def modifica_kanban(kanban_id):
       except Exception as e:
           print(f"Errore nella modifica del kanban {e}")
           return jsonify({'message': 'Errore interno del server'}), 500
-    if request.method == 'DELETE':
+    elif request.method == 'DELETE':
         try:
              kanban = Kanban.query.get(kanban_id)
              if kanban:
