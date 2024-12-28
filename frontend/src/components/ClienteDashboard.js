@@ -65,7 +65,7 @@ const ClienteDashboard = () => {
 
     const handleSvuotaKanban = async (kanbanId) => {
         try {
-            await axios.put(`/api/kanban/${kanbanId}`, { stato: 'Svuotato' });
+            await axios.put(`/api/kanban/${kanbanId}/stato`, { stato: 'Svuotato' });
            setKanbanList(kanbanList.map(kanban => kanban.id === kanbanId ? { ...kanban, stato: 'Svuotato' } : kanban));
             toast({
                 title: 'Kanban svuotato',

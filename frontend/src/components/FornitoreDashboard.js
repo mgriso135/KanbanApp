@@ -63,7 +63,7 @@ const FornitoreDashboard = () => {
 
     const handleAttivaKanban = async (kanbanId) => {
         try {
-            await axios.put(`/api/kanban/${kanbanId}`, { stato: 'Attivo' });
+            await axios.put(`/api/kanban/${kanbanId}/stato`, { stato: 'Attivo' });
            setKanbanList(kanbanList.map(kanban => kanban.id === kanbanId ? { ...kanban, stato: 'Attivo' } : kanban));
             toast({
                title: 'Kanban reso attivo',

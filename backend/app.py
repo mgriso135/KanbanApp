@@ -62,7 +62,6 @@ def gestisci_clienti():
         db.session.add(nuovo_cliente)
         db.session.commit()
         return jsonify({'message': 'Cliente creato con successo!', 'id': nuovo_cliente.id}), 201
-
 @app.route('/api/clienti/<int:cliente_id>', methods=['PUT'])
 def modifica_cliente(cliente_id):
     data = request.get_json()
@@ -81,7 +80,6 @@ def modifica_cliente(cliente_id):
         return jsonify({'message': 'Errore interno del server'}), 500
 
 
-
 # API per Fornitori
 @app.route('/api/fornitori', methods=['GET', 'POST'])
 def gestisci_fornitori():
@@ -96,8 +94,8 @@ def gestisci_fornitori():
         return jsonify({'message': 'Fornitore creato con successo!', 'id': nuovo_fornitore.id}), 201
 @app.route('/api/fornitori/<int:fornitore_id>', methods=['PUT'])
 def modifica_fornitore(fornitore_id):
-    data = request.get_json()
-    try:
+     data = request.get_json()
+     try:
         fornitore = Fornitore.query.get(fornitore_id)
         if fornitore:
             fornitore.ragione_sociale = data['ragione_sociale']
@@ -107,9 +105,9 @@ def modifica_fornitore(fornitore_id):
             db.session.commit()
             return jsonify({'message': 'Fornitore modificato con successo!'}), 200
         return jsonify({'message': 'Fornitore non trovato'}), 404
-    except Exception as e:
-      print(f"Errore nella modifica del fornitore {e}")
-      return jsonify({'message': 'Errore interno del server'}), 500
+     except Exception as e:
+         print(f"Errore nella modifica del fornitore {e}")
+         return jsonify({'message': 'Errore interno del server'}), 500
 
 # API per Prodotti
 @app.route('/api/prodotti', methods=['GET', 'POST'])
@@ -125,32 +123,6 @@ def gestisci_prodotti():
         return jsonify({'message': 'Prodotto creato con successo!', 'codice_prodotto': nuovo_prodotto.codice_prodotto}), 201
 
 # API per Kanban
-# @app.route('/api/kanban', methods=['GET', 'POST'])
-# def gestisci_kanban():
-#     if request.method == 'GET':
-#         kanban_list = Kanban.query.all()
-#         return jsonify([{'id': k.id, 'cliente_id': k.cliente_id, 'prodotto_codice': k.prodotto_codice,
-#                          'fornitore_id': k.fornitore_id, 'quantita': k.quantita, 'tipo_contenitore': k.tipo_contenitore,
-#                          'stato': k.stato, 'data_aggiornamento': k.data_aggiornamento.isoformat()} for k in kanban_list])
-#     elif request.method == 'POST':
-#         data = request.get_json()
-#         num_cartellini = int(data.get('num_cartellini', 1))
-#         
-#         created_kanbans = []
-#         for _ in range(num_cartellini):
-#           nuovo_kanban = Kanban(cliente_id=data['cliente_id'], prodotto_codice=data['prodotto_codice'],
-#                               fornitore_id=data['fornitore_id'], quantita=data['quantita'],
-#                               tipo_contenitore=data['tipo_contenitore'])
-#           db.session.add(nuovo_kanban)
-#           db.session.flush()
-#           created_kanbans.append({'id': nuovo_kanban.id})
-#           
-#         db.session.commit()
-#         return jsonify({'message': f'{num_cartellini} Kanban creati con successo', 'ids': created_kanbans}), 201
-    
-# API per Kanban
-
-# API per Kanban
 @app.route('/api/kanban', methods=['GET', 'POST'])
 def gestisci_kanban():
     if request.method == 'GET':
@@ -160,7 +132,7 @@ def gestisci_kanban():
                          'stato': k.stato, 'data_aggiornamento': k.data_aggiornamento.isoformat(),
                          'cliente': {'ragione_sociale': k.cliente.ragione_sociale} if k.cliente else None,
                          'prodotto': {'descrizione': k.prodotto.descrizione} if k.prodotto else None,
-                        'fornitore': {'ragione_sociale': k.fornitore.ragione_sociale} if k.fornitore else None
+                         'fornitore': {'ragione_sociale': k.fornitore.ragione_sociale} if k.fornitore else None
                         } for k in kanban_list])
     elif request.method == 'POST':
         data = request.get_json()
@@ -177,38 +149,28 @@ def gestisci_kanban():
 
         db.session.commit()
         return jsonify({'message': f'{num_cartellini} Kanban creati con successo', 'ids': created_kanbans}), 201
-
-# API per aggiornare lo stato del kanban
-# @app.route('/api/kanban/<int:kanban_id>', methods=['PUT'])
-# def aggiorna_stato_kanban(kanban_id):
-#     data = request.get_json()
-#     kanban_card = Kanban.query.get(kanban_id)
-#     if kanban_card:
-#         kanban_card.stato = data['stato']
-#         kanban_card.data_aggiornamento = datetime.utcnow()
-#         db.session.commit()
-#         return jsonify({'message': 'Stato kanban aggiornato con successo'}), 200
-#     return jsonify({'message': 'Kanban non trovato'}), 404
-
-@app.route('/api/kanban/<int:kanban_id>', methods=['PUT','DELETE'])
+@app.route('/api/kanban/<int:kanban_id>', methods=['DELETE'])
 def modifica_kanban(kanban_id):
     if request.method == 'PUT':
-        data = request.get_json()
-        try:
-           kanban = Kanban.query.get(kanban_id)
-           if kanban:
-                kanban.cliente_id = data['cliente_id']
-                kanban.prodotto_codice = data['prodotto_codice']
-                kanban.fornitore_id = data['fornitore_id']
-                kanban.quantita = data['quantita']
-                kanban.tipo_contenitore = data['tipo_contenitore']
-                db.session.commit()
-                return jsonify({'message': 'Kanban modificato con successo!'}), 200
-           return jsonify({'message': 'Kanban non trovato'}), 404
-        except Exception as e:
-            print(f"Errore nella modifica del kanban {e}")
-            return jsonify({'message': 'Errore interno del server'}), 500
-    elif request.method == 'DELETE':
+      data = request.get_json()
+      try:
+          kanban = Kanban.query.get(kanban_id)
+          if kanban:
+             if data:
+               kanban.cliente_id = data['cliente_id']
+               kanban.prodotto_codice = data['prodotto_codice']
+               kanban.fornitore_id = data['fornitore_id']
+               kanban.quantita = data['quantita']
+               kanban.tipo_contenitore = data['tipo_contenitore']
+               db.session.commit()
+               return jsonify({'message': 'Kanban modificato con successo!'}), 200
+             else:
+               return jsonify({'message': 'Kanban modificato con successo! ma data null'}), 200
+          return jsonify({'message': 'Kanban non trovato'}), 404
+      except Exception as e:
+          print(f"Errore nella modifica del kanban {e}")
+          return jsonify({'message': 'Errore interno del server'}), 500
+    if request.method == 'DELETE':
         try:
              kanban = Kanban.query.get(kanban_id)
              if kanban:
@@ -219,6 +181,26 @@ def modifica_kanban(kanban_id):
         except Exception as e:
           print(f"Errore nell'eliminazione del kanban {e}")
           return jsonify({'message': 'Errore interno del server'}), 500
+
+# API per aggiornare lo stato del kanban
+@app.route('/api/kanban/<int:kanban_id>/stato', methods=['PUT'])
+def aggiorna_stato_kanban(kanban_id):
+    data = request.get_json()
+    try:
+        kanban_card = Kanban.query.get(kanban_id)
+        if kanban_card:
+             if data:
+               kanban_card.stato = data['stato']
+               kanban_card.data_aggiornamento = datetime.utcnow()
+               db.session.commit()
+               return jsonify({'message': 'Stato kanban aggiornato con successo'}), 200
+             else:
+              return jsonify({'message': 'Stato kanban aggiornato con successo, ma data null'}), 200
+        return jsonify({'message': 'Kanban non trovato'}), 404
+    except Exception as e:
+        print(f"Errore durante la modifica dello stato del kanban {e}")
+        return jsonify({'message': 'Errore interno del server'}), 500
+
 
 # API per dashboard clienti
 @app.route('/api/dashboard/clienti/<int:cliente_id>', methods=['GET'])
@@ -266,6 +248,7 @@ def gestisci_kanban_history():
              'fornitore': {'ragione_sociale': kanban.fornitore.ragione_sociale} if kanban.fornitore else None
           }
       )
+
     return jsonify(history)
 
 if __name__ == '__main__':
