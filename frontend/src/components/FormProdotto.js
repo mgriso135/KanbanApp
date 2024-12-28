@@ -8,7 +8,7 @@ import {
     Button,
     useToast,
 } from '@chakra-ui/react';
-import axios from 'axios';
+import axios from '../utils/axiosConfig';
 import { useNavigate } from 'react-router-dom';
 
 const FormProdotto = () => {

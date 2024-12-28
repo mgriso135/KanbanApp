@@ -21,6 +21,8 @@ import FornitoreDashboard from './FornitoreDashboard';
 import KanbanHistory from './KanbanHistory';
 import ClientiList from './ClientiList';
 import FornitoriList from './FornitoriList';
+import KanbanList from './KanbanList';
+
 
 const NavBar = () => {
   return (
@@ -33,7 +35,7 @@ const NavBar = () => {
             <Flex alignItems={'center'}>
               <Menu>
                 <MenuButton as={Button} colorScheme="teal">
-                  Aggiungi
+                  Manage
                 </MenuButton>
                 <MenuList bg="gray.700">
                  <MenuItem as={Link} to="/clienti-list" bg="gray.700">
@@ -45,6 +47,9 @@ const NavBar = () => {
                   <MenuItem as={Link} to="/aggiungi-prodotto" bg="gray.700">
                     Prodotto
                   </MenuItem>
+                    <MenuItem as={Link} to="/kanban-list" bg="gray.700">
+                        Gestione Kanban
+                    </MenuItem>
                   <MenuItem as={Link} to="/aggiungi-kanban" bg="gray.700">
                     Kanban
                   </MenuItem>
@@ -66,9 +71,11 @@ const NavBar = () => {
              <Route path="/aggiungi-fornitore/:fornitoreId" element={<FormFornitore />} />
             <Route path="/aggiungi-prodotto" element={<FormProdotto />} />
             <Route path="/aggiungi-kanban" element={<FormKanban />} />
+            <Route path="/aggiungi-kanban/:kanbanId" element={<FormKanban />} />
             <Route path="/kanban-history" element={<KanbanHistory />} />
             <Route path="/clienti-list" element={<ClientiList />} />
             <Route path="/fornitori-list" element={<FornitoriList />} />
+             <Route path="/kanban-list" element={<KanbanList />} />
         </Routes>
       </Router>
   );

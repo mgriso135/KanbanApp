@@ -8,7 +8,7 @@ import {
     Button,
     useToast,
 } from '@chakra-ui/react';
-import axios from 'axios';
+import axios from '../utils/axiosConfig';
 import { useNavigate, useParams } from 'react-router-dom';
 
 

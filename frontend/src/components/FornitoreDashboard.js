@@ -6,7 +6,7 @@ import {
     useToast,
     Flex
 } from '@chakra-ui/react';
-import axios from 'axios';
+import axios from '../utils/axiosConfig';
 import { useParams } from 'react-router-dom';
 import KanbanCard from './KanbanCard';
 

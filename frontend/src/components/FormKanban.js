@@ -9,11 +9,12 @@ import {
     Select,
     useToast
 } from '@chakra-ui/react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import axios from '../utils/axiosConfig';
+import { useNavigate, useParams } from 'react-router-dom';
 
 
 const FormKanban = () => {
+    const { kanbanId } = useParams();
     const [clienti, setClienti] = useState([]);
     const [fornitori, setFornitori] = useState([]);
     const [prodotti, setProdotti] = useState([]);
@@ -25,6 +26,7 @@ const FormKanban = () => {
     const [numCartellini, setNumCartellini] = useState('');
     const toast = useToast();
     const navigate = useNavigate();
+     const [isEditing, setIsEditing] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -35,52 +37,93 @@ const FormKanban = () => {
                 setFornitori(fornitoriResult.data);
                 const prodottiResult = await axios.get('/api/prodotti');
                 setProdotti(prodottiResult.data);
+                if (kanbanId) {
+                    setIsEditing(true);
+                     const kanbanResult = await axios.get(`/api/kanban`);
+                     const kanban = kanbanResult.data.find(k => k.id === parseInt(kanbanId,10))
+                    if(kanban){
+                           setClienteId(kanban.cliente_id);
+                           setProdottoCodice(kanban.prodotto_codice);
+                            setFornitoreId(kanban.fornitore_id);
+                           setQuantita(kanban.quantita);
+                          setTipoContenitore(kanban.tipo_contenitore);
+                    }
+                    else{
+                          toast({
+                              title: 'Kanban non trovato',
+                             status: 'error',
+                             duration: 3000,
+                              isClosable: true,
+                         });
+                         navigate('/');
+                   }
+                } else {
+                    setIsEditing(false);
+                     setClienteId('');
+                     setProdottoCodice('');
+                     setFornitoreId('');
+                     setQuantita('');
+                      setTipoContenitore('');
+                     setNumCartellini('');
+                }
             } catch (error) {
                 toast({
                     title: 'Errore durante il caricamento dei dati',
-                    description: 'Si è verificato un errore durante il caricamento dei clienti, fornitori o prodotti.',
+                    description: 'Si è verificato un errore durante il caricamento dei dati per il kanban',
                     status: 'error',
                     duration: 5000,
                     isClosable: true,
                 });
+                navigate('/');
             }
         };
 
         fetchData();
-    }, [toast]);
+    }, [kanbanId, toast, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('/api/kanban', {
+            const payload = {
                 cliente_id: parseInt(clienteId, 10),
                 prodotto_codice: prodottoCodice,
                 fornitore_id: parseInt(fornitoreId, 10),
                 quantita: parseInt(quantita, 10),
                 tipo_contenitore: tipoContenitore,
-                num_cartellini: parseInt(numCartellini, 10),
-            });
-            toast({
-                title: 'Kanban creati',
+             };
+           if(isEditing){
+               await axios.put(`/api/kanban/${kanbanId}`, payload);
+              toast({
+                title: 'Kanban modificato',
                 status: 'success',
-                duration: 3000,
+               duration: 3000,
                 isClosable: true,
-            });
-            navigate('/'); // Navigate to dashboard after form submission
+           });
+            } else{
+               payload.num_cartellini = parseInt(numCartellini,10)
+               await axios.post('/api/kanban', payload);
+                toast({
+                    title: 'Kanban creato',
+                    status: 'success',
+                    duration: 3000,
+                    isClosable: true,
+                });
+            }
+            navigate('/');
         } catch (error) {
-            toast({
-                title: 'Errore durante la creazione del kanban',
-                description: 'Si è verificato un errore durante la creazione dei kanban.',
-                status: 'error',
-                duration: 5000,
-                isClosable: true,
-            });
+              toast({
+                  title: `Errore durante ${isEditing ? 'la modifica' : 'la creazione'} del kanban`,
+                description: `Si è verificato un errore durante ${isEditing ? 'la modifica' : 'la creazione'} del kanban`,
+                   status: 'error',
+                 duration: 5000,
+                  isClosable: true,
+              });
         }
     };
 
     return (
         <Box p={4}>
-            <Heading mb={4}>Aggiungi Kanban</Heading>
+            <Heading mb={4}>{isEditing ? 'Modifica Kanban' : 'Aggiungi Kanban'}</Heading>
             <form onSubmit={handleSubmit}>
                 <FormControl mb={4}>
                     <FormLabel>Cliente</FormLabel>
@@ -114,11 +157,13 @@ const FormKanban = () => {
                     <FormLabel>Tipo Contenitore</FormLabel>
                     <Input type="text" value={tipoContenitore} onChange={(e) => setTipoContenitore(e.target.value)} required />
                 </FormControl>
-                <FormControl mb={4}>
-                    <FormLabel>Numero di cartellini da creare</FormLabel>
-                    <Input type="number" value={numCartellini} onChange={(e) => setNumCartellini(e.target.value)} required />
-                </FormControl>
-                <Button colorScheme="teal" type="submit">Aggiungi</Button>
+                {!isEditing && (
+                    <FormControl mb={4}>
+                       <FormLabel>Numero di cartellini da creare</FormLabel>
+                        <Input type="number" value={numCartellini} onChange={(e) => setNumCartellini(e.target.value)} required />
+                   </FormControl>
+                )}
+                <Button colorScheme="teal" type="submit">{isEditing ? 'Salva modifiche' : 'Aggiungi'}</Button>
             </form>
         </Box>
     );

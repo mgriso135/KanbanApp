@@ -12,7 +12,7 @@ import {
     Td,
     Flex
 } from '@chakra-ui/react';
-import axios from 'axios';
+import axios from '../utils/axiosConfig';
 
 const KanbanHistory = () => {
     const [kanbanHistory, setKanbanHistory] = useState([]);
