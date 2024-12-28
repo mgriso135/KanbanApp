@@ -17,7 +17,7 @@ const FornitoreDashboard = () => {
     const toast = useToast();
     const [groupedKanban, setGroupedKanban] = useState({});
     const [scanning, setScanning] = useState(false);
-    const [scanResult, setScanResult] = useState('');
+     const [scanResult, setScanResult] = useState('');
 
 
     useEffect(() => {
@@ -41,19 +41,15 @@ const FornitoreDashboard = () => {
 
 
      useEffect(() => {
-        // Raggruppa i cartellini per codice prodotto
+        // Raggruppa i cartellini per codice prodotto e riordina
         const grouped = kanbanList.reduce((acc, kanban) => {
             const prodottoCodice = kanban.prodotto?.descrizione;
             if (!acc[prodottoCodice]) {
                 acc[prodottoCodice] = [];
             }
-           if (kanban.stato === 'Svuotato'){
-               acc[prodottoCodice].push(kanban);
-            }
-
+            acc[prodottoCodice].push(kanban);
             return acc;
         }, {});
-
 
         // Ordina i cartellini di ogni gruppo, mettendo prima quelli svuotati
         for (const prodottoCodice in grouped) {
@@ -69,9 +65,10 @@ const FornitoreDashboard = () => {
 
         setGroupedKanban(grouped);
     }, [kanbanList]);
-      const handleAttivaKanban = async (kanbanId) => {
+
+    const handleAttivaKanban = async (kanbanId) => {
         try {
-             await axios.put(`/api/kanban/${kanbanId}/stato`, { stato: 'Attivo' });
+            await axios.put(`/api/kanban/${kanbanId}/stato`, { stato: 'Attivo' });
             setKanbanList(kanbanList.map(kanban => kanban.id === kanbanId ? { ...kanban, stato: 'Attivo' } : kanban));
             toast({
                title: 'Kanban reso attivo',
@@ -89,14 +86,13 @@ const FornitoreDashboard = () => {
             });
         }
     };
-
       const handleScan = (result) => {
         if (result) {
            setScanning(false);
            setScanResult(result.text);
           //Estraggo l'id del kanban
           const idKanban = result.text.split(":")[1]
-           if (idKanban) {
+          if (idKanban) {
                handleAttivaKanban(parseInt(idKanban,10));
            }
         }
@@ -116,7 +112,7 @@ const FornitoreDashboard = () => {
     return (
         <Box p={4}>
           <Heading mb={4}>Dashboard Fornitore</Heading>
-             <Button onClick={() => setScanning(!scanning)} colorScheme="teal" mb={4}>
+              <Button onClick={() => setScanning(!scanning)} colorScheme="teal" mb={4}>
                  {scanning ? "Chiudi Scanner" : "Apri Scanner"}
               </Button>
              {scanning &&
@@ -126,7 +122,7 @@ const FornitoreDashboard = () => {
                     style={{ width: '100%' }}
                 />
               }
-              {Object.keys(groupedKanban).length === 0 ? (
+                {Object.keys(groupedKanban).length === 0 ? (
                     <Box>Nessun kanban da ripristinare</Box>
                 ) : (
                     Object.keys(groupedKanban).map((prodottoCodice) => (

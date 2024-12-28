@@ -14,17 +14,17 @@ import QrScanner from 'react-qr-scanner';
 const ClienteDashboard = () => {
     const { clienteId } = useParams();
     const [kanbanList, setKanbanList] = useState([]);
-     const [groupedKanban, setGroupedKanban] = useState({});
     const toast = useToast();
      const [scanning, setScanning] = useState(false);
      const [scanResult, setScanResult] = useState('');
+      const [groupedKanban, setGroupedKanban] = useState({});
 
 
     useEffect(() => {
         const fetchKanban = async () => {
             try {
                 const response = await axios.get(`/api/dashboard/clienti/${clienteId}`);
-                 setKanbanList(response.data);
+                setKanbanList(response.data);
             } catch (error) {
                  toast({
                  title: 'Errore durante il caricamento dei dati',
@@ -39,7 +39,7 @@ const ClienteDashboard = () => {
         fetchKanban();
     }, [clienteId, toast]);
     useEffect(() => {
-      // Raggruppa i cartellini per codice prodotto
+    // Raggruppa i cartellini per codice prodotto e riordina
       const grouped = kanbanList.reduce((acc, kanban) => {
           const prodottoCodice = kanban.prodotto?.descrizione;
           if (!acc[prodottoCodice]) {
@@ -48,10 +48,20 @@ const ClienteDashboard = () => {
           acc[prodottoCodice].push(kanban);
           return acc;
       }, {});
+     for (const prodottoCodice in grouped) {
+          grouped[prodottoCodice].sort((a, b) => {
+                if (a.stato === 'Attivo' && b.stato !== 'Attivo') {
+                    return -1;
+                } else if (a.stato !== 'Attivo' && b.stato === 'Attivo') {
+                    return 1;
+                }
+              return 0;
+           });
+        }
       setGroupedKanban(grouped);
     }, [kanbanList]);
 
-    const handleSvuotaKanban = async (kanbanId) => {
+     const handleSvuotaKanban = async (kanbanId) => {
         try {
              await axios.put(`/api/kanban/${kanbanId}/stato`, { stato: 'Svuotato' });
             setKanbanList(kanbanList.map(kanban => kanban.id === kanbanId ? { ...kanban, stato: 'Svuotato' } : kanban));
@@ -98,7 +108,7 @@ const ClienteDashboard = () => {
     return (
         <Box p={4}>
             <Heading mb={4}>Dashboard Cliente</Heading>
-              <Button onClick={() => setScanning(!scanning)} colorScheme="teal" mb={4}>
+             <Button onClick={() => setScanning(!scanning)} colorScheme="teal" mb={4}>
                {scanning ? "Chiudi Scanner" : "Apri Scanner"}
               </Button>
               {scanning &&
@@ -108,25 +118,24 @@ const ClienteDashboard = () => {
                   style={{ width: '100%' }}
                />
                }
-              {Object.keys(groupedKanban).length === 0 ? (
-                    <Box>Nessun kanban trovato</Box>
-                ) : (
-                    Object.keys(groupedKanban).map((prodottoCodice) => (
-                       <Box key={prodottoCodice} mb={6}>
-                           <Heading size="md" mb={2}>{prodottoCodice}</Heading>
-                             <Flex wrap="wrap" >
-                               {groupedKanban[prodottoCodice].map((kanban) => (
-                                      <KanbanCard key={kanban.id} kanban={kanban}>
-                                        {kanban.stato === 'Attivo' &&
-                                          <Button colorScheme="red" onClick={() => handleSvuotaKanban(kanban.id)} >Svuota</Button>
-                                        }
-                                    </KanbanCard>
-                                ))
-                             }
-                             </Flex>
-                        </Box>
+               {Object.keys(groupedKanban).length === 0 ? (
+                  <Box>Nessun kanban trovato</Box>
+              ) : (
+                 Object.keys(groupedKanban).map((prodottoCodice) => (
+                     <Box key={prodottoCodice} mb={6}>
+                          <Heading size="md" mb={2}>{prodottoCodice}</Heading>
+                          <Flex wrap="wrap">
+                              {groupedKanban[prodottoCodice].map((kanban) => (
+                                <KanbanCard key={kanban.id} kanban={kanban}>
+                                    {kanban.stato === 'Attivo' &&
+                                      <Button colorScheme="red" onClick={() => handleSvuotaKanban(kanban.id)} >Svuota</Button>
+                                    }
+                                </KanbanCard>
+                               ))}
+                          </Flex>
+                      </Box>
                    ))
-             )}
+              )}
         </Box>
     );
 };

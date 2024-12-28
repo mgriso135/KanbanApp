@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Box,
     Heading,
@@ -16,6 +16,8 @@ import {
 } from '@chakra-ui/react';
 import axios from '../utils/axiosConfig';
 import { Link } from 'react-router-dom';
+import { useReactToPrint } from 'react-to-print';
+import KanbanCard from './KanbanCard';
 
 
 const KanbanList = () => {
@@ -23,6 +25,7 @@ const KanbanList = () => {
     const [prodotti, setProdotti] = useState([]);
     const [selectedProdotto, setSelectedProdotto] = useState('');
      const toast = useToast();
+    const componentRef = useRef();
 
 
     useEffect(() => {
@@ -30,7 +33,7 @@ const KanbanList = () => {
             try {
                 const response = await axios.get('/api/kanban');
                 setKanbanList(response.data.filter(kanban => kanban.stato === 'Attivo'));
-                 const prodottiResult = await axios.get('/api/prodotti');
+                const prodottiResult = await axios.get('/api/prodotti');
                 setProdotti(prodottiResult.data);
             } catch (error) {
                toast({
@@ -71,6 +74,9 @@ const KanbanList = () => {
         ? kanbanList.filter(kanban => kanban.prodotto?.descrizione === selectedProdotto)
         : kanbanList;
 
+    const handlePrint = useReactToPrint({
+         content: () => componentRef.current,
+      });
 
     return (
         <Box p={4}>
@@ -79,18 +85,19 @@ const KanbanList = () => {
                 <Spacer/>
                 <Link to="/aggiungi-kanban">
                    <Button colorScheme="teal" mr={2}>Aggiungi Kanban</Button>
-                </Link>
+                  </Link>
+                  <Button colorScheme="blue" onClick={handlePrint}>Stampa Cartellino</Button>
           </Flex>
-          <Flex mb={4} align="center">
-                 <Box mr={2}>
-                   <Heading size="md">Filtra per prodotto:</Heading>
+           <Flex mb={4} align="center">
+               <Box mr={2}>
+                  <Heading size="md">Filtra per prodotto:</Heading>
                    <Select placeholder="Seleziona un prodotto" value={selectedProdotto} onChange={(e) => setSelectedProdotto(e.target.value)}>
                        {prodotti.map((prodotto) => (
-                           <option key={prodotto.codice_prodotto} value={prodotto.descrizione}>{prodotto.descrizione}</option>
-                         ))}
-                     </Select>
-                  </Box>
-              </Flex>
+                            <option key={prodotto.codice_prodotto} value={prodotto.descrizione}>{prodotto.descrizione}</option>
+                       ))}
+                  </Select>
+                </Box>
+            </Flex>
           <Box overflowX="auto">
             <Table variant="striped" colorScheme="gray">
               <Thead>
@@ -99,7 +106,7 @@ const KanbanList = () => {
                     <Th>Prodotto</Th>
                     <Th>Cliente</Th>
                    <Th>Fornitore</Th>
-                    <Th>Modifica</Th>
+                   <Th>Modifica</Th>
                    <Th>Elimina</Th>
                </Tr>
               </Thead>
@@ -123,6 +130,13 @@ const KanbanList = () => {
                 </Tbody>
              </Table>
            </Box>
+             <div style={{ display: 'none' }}>
+                <div ref={componentRef}>
+                  {filteredKanbanList.map((kanban) => (
+                       <KanbanCard key={kanban.id} kanban={kanban}/>
+                    ))}
+               </div>
+             </div>
         </Box>
     );
 };
