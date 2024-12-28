@@ -1,0 +1,139 @@
+# Electronic Kanban Application
+
+## English
+
+### Introduction
+
+This is a simple but effective electronic Kanban application designed to manage products, customers, suppliers, and Kanban cards. It was created with the help of Google AI Studio and uses a Python backend with Flask and SQLAlchemy, and a React frontend.
+
+### Technologies Used
+
+*   **Backend:** Python, Flask, SQLAlchemy, SQLite
+*   **Frontend:** Node.js, React, Chakra UI, Axios
+
+### How to Run the Application
+
+#### Backend (Python)
+
+1.  Make sure you have **Python 3.8 or higher** installed.
+2.  Navigate to the `backend` folder from your terminal.
+3.  Create a virtual environment (optional but recommended):
+    ```bash
+    python -m venv venv
+    venv\Scripts\activate  # Windows
+    source venv/bin/activate  # macOS / Linux
+    ```
+4.  Install the dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
+5.  Run the backend:
+    ```bash
+    python app.py
+    ```
+   The backend will be running on `http://127.0.0.1:5000`.
+
+#### Frontend (React)
+1.  Make sure you have **Node.js** and **npm** installed.
+2.  Navigate to the `frontend` folder from your terminal.
+3.  Install the dependencies:
+    ```bash
+    npm install
+    ```
+4.  Run the frontend:
+    ```bash
+    npm start
+    ```
+   The frontend will be running on `http://localhost:3000`.
+
+### Features
+
+*   Management of products, customers, and suppliers.
+*   Creation and management of Kanban cards associated with products, customers, and suppliers.
+*   Monitoring of the status of Kanban cards (active, emptied, in restoration).
+*   Dashboard for customers and suppliers to view their respective Kanban cards.
+*   History to monitor the status of the kanban cards and to filter by product.
+*   Modification and creation of customers and suppliers.
+
+
+#### The Initial Prompt
+The project started with a single prompt that outlined the functionalities of a Kanban application:
+Create an app that manages electronic kanban in Python. The app must manage n products, m customers, and k suppliers. Each product must have several kanban cards associated with it. A customer is characterized by: unique id, company name, address, VAT number, SDI code. A supplier is characterized by: unique id, company name, address, VAT number, SDI code. A product is characterized by: product code, description, supply lead time. Kanban cards provide the link between customer-product-supplier and are characterized by: customer, product, supplier, quantity, container type, status (active, emptied, in restoration). Each kanban card is associated with a container. When a customer empties a container, this must change state and the supplier must see it in a dedicated dashboard. The supplier picks up the container, refills it, and must be able to mark it as active again upon delivery to the customer. There must be a dashboard for each customer where they can view the status of their kanban cards. There must be a frontend where users (customers and suppliers) can interact with the application.
+
+### Next Modifications
+
+After the initial prompt, the project was developed through a series of successive modifications including:
+* the use of a prompt interface for the backend,
+* the addition of dashboards for customers and suppliers
+* the management of the status of kanban cards
+* the creation of multiple cards
+* the implementation of a graphical frontend, and finally a SQL database.
+* the addition of the modification form and of customer and suppliers lists.
+
+
+## Italian
+
+### Introduzione
+Questa è un'applicazione Kanban elettronica semplice ma efficace, progettata per gestire prodotti, clienti, fornitori e cartellini Kanban. È stata creata con l'aiuto di Google AI Studio e utilizza un backend in Python con Flask e SQLAlchemy, e un frontend in React.
+
+### Tecnologie Utilizzate
+*   **Backend:** Python, Flask, SQLAlchemy, SQLite
+*   **Frontend:** Node.js, React, Chakra UI, Axios
+
+### Come Eseguire l'Applicazione
+
+#### Backend (Python)
+
+1.  Assicurati di avere **Python 3.8 o superiore** installato.
+2.  Naviga nella cartella `backend` dal tuo terminale.
+3.  Crea un ambiente virtuale (opzionale ma consigliato):
+    ```bash
+    python -m venv venv
+    venv\Scripts\activate  # Windows
+    source venv/bin/activate  # macOS / Linux
+    ```
+4.  Installa le dipendenze:
+    ```bash
+    pip install -r requirements.txt
+    ```
+5.  Avvia il backend:
+    ```bash
+    python app.py
+    ```
+   Il backend sarà in esecuzione su `http://127.0.0.1:5000`.
+
+#### Frontend (React)
+1.  Assicurati di avere **Node.js** e **npm** installati.
+2.  Naviga nella cartella `frontend` dal tuo terminale.
+3.  Installa le dipendenze:
+    ```bash
+    npm install
+    ```
+4.  Avvia il frontend:
+    ```bash
+    npm start
+    ```
+   Il frontend sarà in esecuzione su `http://localhost:3000`.
+
+### Funzionalità
+
+*   Gestione di prodotti, clienti e fornitori.
+*   Creazione e gestione dei cartellini Kanban associati a prodotti, clienti e fornitori.
+*   Monitoraggio dello stato dei cartellini (attivo, svuotato, in ripristino).
+*   Dashboard per clienti e fornitori con la visualizzazione dei rispettivi cartellini.
+*   History per monitorare lo stato dei cartellini e filtrare per prodotto
+*   Modifica e creazione di clienti e fornitori.
+
+### Il Prompt Iniziale
+Il progetto è nato a partire da un singolo prompt che definiva in grandi linee le funzionalità di un'applicazione Kanban:
+
+Crea una app che gestisca il kanban elettronico in python. La app deve gestire n prodotti, m clienti e k fornitori. Per ogni prodotto ci devono essere associati diversi cartellini kanban. Un cliente è caratterizzato da: id univoco, ragione sociale, indirizzo, partita iva, codice sdi. Un fornitore è caratterizzato da: id univoco, ragione sociale, indirizzo, partita iva, codice sdi. Un prodotto è caratterizzato da: codice prodotto, descrizione, lead time di fornitura. I cartellini kanban forniscono il legame fra cliente-prodotto-fornitore e sono caratterizzati da: cliente, prodotto, fornitore, quantità, tipo contenitore, stato (attivo, svuotato, in ripristino). Ogni cartellino kanban è associato ad un contenitore. Quando un cliente svuota un contenitore, questo deve cambiare stato ed il fornitore lo deve vedere in una dashboard dedicata. Il fornitore preleva il contenitore, lo riempie di nuovo e lo deve poter contrassegnare nuovamente come attivo al momento della consegna al cliente. Ci deve essere una dashboard per ogni cliente, dove può visualizzare lo stato dei suoi cartellini kanban. Ci deve essere un frontend, dove gli utenti (clienti e fornitori) possono interagire con l'applicazione.
+
+### Modifiche Successive
+Dopo questo prompt iniziale, il progetto è stato sviluppato attraverso una serie di modifiche successive, includendo:
+*  l'uso di una interfaccia a prompt all'inizio per il backend
+*  l'aggiunta di dashboard per clienti e fornitori
+*  la gestione dello stato dei cartellini kanban
+*  la creazione di più cartellini
+*  l'uso di un frontend grafico, e infine di un database SQL.
+* l'aggiunta della modifica ai clienti e ai fornitori e della lista clienti e fornitori
