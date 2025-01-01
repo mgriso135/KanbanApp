@@ -16,14 +16,19 @@ import {
 } from '@chakra-ui/react';
 import axios from '../utils/axiosConfig';
 import { Link } from 'react-router-dom';
-
+import { useReactToPrint } from 'react-to-print';
+import KanbanCard from './KanbanCard';
 
 const KanbanList = () => {
     const [kanbanList, setKanbanList] = useState([]);
     const [prodotti, setProdotti] = useState([]);
     const [selectedProdotto, setSelectedProdotto] = useState('');
-     const toast = useToast();
+    const toast = useToast();
+    const componentRef = useRef();
 
+    const handlePrintSingle = useReactToPrint({
+        content: (kanbanId) => () => componentRef.current.querySelector(`#kanban-${kanbanId}`),
+     });
 
     useEffect(() => {
         const fetchKanban = async () => {
@@ -71,6 +76,7 @@ const KanbanList = () => {
         ? kanbanList.filter(kanban => kanban.prodotto?.descrizione === selectedProdotto)
         : kanbanList;
 
+
     return (
         <Box p={4}>
           <Flex mb={4} align="center">
@@ -100,6 +106,7 @@ const KanbanList = () => {
                    <Th>Fornitore</Th>
                     <Th>Modifica</Th>
                    <Th>Elimina</Th>
+                     <Th>Stampa</Th>
                </Tr>
               </Thead>
                 <Tbody>
@@ -117,11 +124,23 @@ const KanbanList = () => {
                          <Td>
                                <Button size="sm" colorScheme="red" onClick={() => handleEliminaKanban(kanban.id)}>Elimina</Button>
                             </Td>
+                           <Td>
+                                 <Button size="sm" colorScheme="blue" onClick={()=> handlePrintSingle(kanban.id)}>Stampa</Button>
+                            </Td>
                     </Tr>
                     ))}
                 </Tbody>
              </Table>
            </Box>
+             <div style={{ display: 'none' }}>
+                <div ref={componentRef}>
+                  {filteredKanbanList.map((kanban) => (
+                       <div id={`kanban-${kanban.id}`}>
+                         <KanbanCard  kanban={kanban}/>
+                        </div>
+                   ))}
+               </div>
+            </div>
         </Box>
     );
 };

@@ -9,6 +9,8 @@ import {
 } from '@chakra-ui/react';
 import axios from '../utils/axiosConfig';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+
 
 const KanbanDashboard = () => {
   const [clienti, setClienti] = useState([]);
@@ -16,6 +18,7 @@ const KanbanDashboard = () => {
   const [selectedCliente, setSelectedCliente] = useState('');
   const [selectedFornitore, setSelectedFornitore] = useState('');
   const toast = useToast();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,32 +43,32 @@ const KanbanDashboard = () => {
 
   return (
       <Box p={4}>
-            <Heading mb={4}>Dashboard</Heading>
+            <Heading mb={4}>{t('dashboard')}</Heading>
 
             <Box mb={4}>
-                <Heading size="md">Clienti</Heading>
-                 <Flex align="center">
-                    <Box mr={2}>
-                        <Select placeholder="Seleziona un cliente" value={selectedCliente} onChange={(e) => setSelectedCliente(e.target.value)}>
+                <Heading size="md">{t('client')}</Heading>
+                <Flex align="center">
+                   <Box mr={2}>
+                        <Select placeholder={t('selectClient')} value={selectedCliente} onChange={(e) => setSelectedCliente(e.target.value)}>
                         {clienti.map((cliente) => (
                                 <option key={cliente.id} value={cliente.id}>{cliente.ragione_sociale}</option>
                             ))}
                         </Select>
-                    </Box>
-                    {selectedCliente &&
+                   </Box>
+                   {selectedCliente &&
                         <Link to={`/clienti/${selectedCliente}`}>
                             <Button colorScheme="teal" ml={2}>Visualizza Kanban</Button>
                          </Link>
                      }
                  </Flex>
-            </Box>
+           </Box>
 
             <Box>
-                <Heading size="md">Fornitori</Heading>
+                <Heading size="md">{t('supplier')}</Heading>
                 <Flex align="center">
                     <Box mr={2}>
-                        <Select placeholder="Seleziona un fornitore" value={selectedFornitore} onChange={(e) => setSelectedFornitore(e.target.value)}>
-                        {fornitori.map((fornitore) => (
+                        <Select placeholder={t('selectSupplier')} value={selectedFornitore} onChange={(e) => setSelectedFornitore(e.target.value)}>
+                            {fornitori.map((fornitore) => (
                             <option key={fornitore.id} value={fornitore.id}>{fornitore.ragione_sociale}</option>
                             ))}
                         </Select>

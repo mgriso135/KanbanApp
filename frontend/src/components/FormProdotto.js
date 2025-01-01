@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 import axios from '../utils/axiosConfig';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const FormProdotto = () => {
   const [codiceProdotto, setCodiceProdotto] = useState('');
@@ -17,7 +18,7 @@ const FormProdotto = () => {
     const [leadTime, setLeadTime] = useState('');
     const toast = useToast();
     const navigate = useNavigate();
-
+    const { t } = useTranslation();
 
   const handleSubmit = async (e) => {
       e.preventDefault();
@@ -48,7 +49,7 @@ const FormProdotto = () => {
 
   return (
         <Box p={4}>
-          <Heading mb={4}>Aggiungi Prodotto</Heading>
+          <Heading mb={4}>{t('createProduct')}</Heading>
           <form onSubmit={handleSubmit}>
               <FormControl mb={4}>
                   <FormLabel>Codice Prodotto</FormLabel>
@@ -62,7 +63,7 @@ const FormProdotto = () => {
                   <FormLabel>Lead Time</FormLabel>
                    <Input type="number" value={leadTime} onChange={(e) => setLeadTime(e.target.value)} required />
                </FormControl>
-              <Button colorScheme="teal" type="submit">Aggiungi</Button>
+              <Button colorScheme="teal" type="submit">{t('add')}</Button>
           </form>
        </Box>
    );

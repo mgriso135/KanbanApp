@@ -10,6 +10,7 @@ import axios from '../utils/axiosConfig';
 import { useParams } from 'react-router-dom';
 import KanbanCard from './KanbanCard';
 import QrScanner from 'react-qr-scanner';
+import { useTranslation } from 'react-i18next';
 
 const FornitoreDashboard = () => {
     const { fornitoreId } = useParams();
@@ -18,6 +19,7 @@ const FornitoreDashboard = () => {
     const [groupedKanban, setGroupedKanban] = useState({});
     const [scanning, setScanning] = useState(false);
      const [scanResult, setScanResult] = useState('');
+      const { t } = useTranslation();
 
 
     useEffect(() => {
@@ -62,9 +64,9 @@ const FornitoreDashboard = () => {
                 return 0;
             });
         }
-
         setGroupedKanban(grouped);
     }, [kanbanList]);
+
 
     const handleAttivaKanban = async (kanbanId) => {
         try {
@@ -123,7 +125,7 @@ const FornitoreDashboard = () => {
                 />
               }
                 {Object.keys(groupedKanban).length === 0 ? (
-                    <Box>Nessun kanban da ripristinare</Box>
+                    <Box>{t('noKanbanFound')}</Box>
                 ) : (
                     Object.keys(groupedKanban).map((prodottoCodice) => (
                          <Box key={prodottoCodice} mb={6}>
@@ -132,7 +134,7 @@ const FornitoreDashboard = () => {
                               {groupedKanban[prodottoCodice].map((kanban) => (
                                     <KanbanCard key={kanban.id} kanban={kanban}>
                                         {kanban.stato === 'Svuotato' &&
-                                        <Button colorScheme="green" onClick={() => handleAttivaKanban(kanban.id)}>Rendi Attivo</Button>
+                                        <Button colorScheme="green" onClick={() => handleAttivaKanban(kanban.id)}>{t('activate')}</Button>
                                         }
                                     </KanbanCard>
                                 ))

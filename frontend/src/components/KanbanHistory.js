@@ -13,19 +13,23 @@ import {
     Flex
 } from '@chakra-ui/react';
 import axios from '../utils/axiosConfig';
+import { useTranslation } from 'react-i18next';
 
 const KanbanHistory = () => {
     const [kanbanHistory, setKanbanHistory] = useState([]);
     const [prodotti, setProdotti] = useState([]);
     const [selectedProdotto, setSelectedProdotto] = useState('');
     const toast = useToast();
+    const { t } = useTranslation();
 
 
     useEffect(() => {
         const fetchData = async () => {
             try {
               const historyResult = await axios.get('/api/kanban/history');
-                setKanbanHistory(historyResult.data);
+              // Ordina per data decrescente
+                const sortedKanbanList = historyResult.data.sort((a, b) => new Date(b.data_aggiornamento) - new Date(a.data_aggiornamento))
+                setKanbanHistory(sortedKanbanList);
               const prodottiResult = await axios.get('/api/prodotti');
                 setProdotti(prodottiResult.data);
             } catch (error) {
@@ -48,11 +52,11 @@ const KanbanHistory = () => {
 
     return (
         <Box p={4}>
-            <Heading mb={4}>Kanban History</Heading>
+            <Heading mb={4}>{t('kanbanHistory')}</Heading>
             <Flex mb={4} align="center">
               <Box mr={2}>
                 <Heading size="md">Filtra per prodotto:</Heading>
-                <Select placeholder="Seleziona un prodotto" value={selectedProdotto} onChange={(e) => setSelectedProdotto(e.target.value)}>
+                <Select placeholder={t('selectProduct')} value={selectedProdotto} onChange={(e) => setSelectedProdotto(e.target.value)}>
                     {prodotti.map((prodotto) => (
                          <option key={prodotto.codice_prodotto} value={prodotto.descrizione}>{prodotto.descrizione}</option>
                       ))}
@@ -63,14 +67,14 @@ const KanbanHistory = () => {
              <Table variant="striped" colorScheme="gray">
                  <Thead>
                   <Tr>
-                       <Th>ID</Th>
-                       <Th>Prodotto</Th>
-                       <Th>Cliente</Th>
-                       <Th>Fornitore</Th>
-                        <Th>Quantità</Th>
-                        <Th>Tipo Contenitore</Th>
-                       <Th>Stato</Th>
-                       <Th>Data Aggiornamento</Th>
+                        <Th>{t('id')}</Th>
+                       <Th>{t('productName')}</Th>
+                       <Th>{t('customer')}</Th>
+                       <Th>{t('provider')}</Th>
+                        <Th>{t('quantity')}</Th>
+                        <Th>{t('type')}</Th>
+                       <Th>{t('stato')}</Th>
+                       <Th>{t('lastUpdate')}</Th>
                   </Tr>
                  </Thead>
                 <Tbody>

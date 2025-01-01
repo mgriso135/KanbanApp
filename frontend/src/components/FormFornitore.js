@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 import axios from '../utils/axiosConfig';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 
 const FormFornitore = () => {
@@ -21,6 +22,8 @@ const FormFornitore = () => {
   const toast = useToast();
     const navigate = useNavigate();
     const [isEditing, setIsEditing] = useState(false);
+      const { t } = useTranslation();
+
 
     useEffect(() => {
       const fetchFornitore = async () => {
@@ -56,6 +59,13 @@ const FormFornitore = () => {
                  navigate('/');
             }
         }
+        else {
+            setIsEditing(false);
+            setRagioneSociale('');
+            setIndirizzo('');
+            setPartitaIva('');
+            setCodiceSdi('');
+        }
       };
 
         fetchFornitore();
@@ -65,12 +75,12 @@ const FormFornitore = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-             const payload = {
+           const payload = {
                 ragione_sociale: ragioneSociale,
                 indirizzo: indirizzo,
                 partita_iva: partitaIva,
-                codice_sdi: codiceSdi
-            };
+                codice_sdi: codiceSdi,
+           };
             if(isEditing){
                 await axios.put(`/api/fornitori/${fornitoreId}`, payload);
                 toast({
@@ -103,25 +113,25 @@ const FormFornitore = () => {
 
   return (
       <Box p={4}>
-          <Heading mb={4}>{isEditing ? 'Modifica Fornitore' : 'Aggiungi Fornitore'}</Heading>
+          <Heading mb={4}>{isEditing ? t('Modifica Fornitore') : t('Aggiungi Fornitore')}</Heading>
           <form onSubmit={handleSubmit}>
               <FormControl mb={4}>
-                  <FormLabel>Ragione Sociale</FormLabel>
+                  <FormLabel>{t('businessName')}</FormLabel>
                   <Input type="text" value={ragioneSociale} onChange={(e) => setRagioneSociale(e.target.value)} required />
               </FormControl>
               <FormControl mb={4}>
-                  <FormLabel>Indirizzo</FormLabel>
+                  <FormLabel>{t('address')}</FormLabel>
                   <Input type="text" value={indirizzo} onChange={(e) => setIndirizzo(e.target.value)} required />
               </FormControl>
                <FormControl mb={4}>
-                  <FormLabel>Partita IVA</FormLabel>
+                  <FormLabel>{t('vatNumber')}</FormLabel>
                  <Input type="text" value={partitaIva} onChange={(e) => setPartitaIva(e.target.value)} required />
               </FormControl>
               <FormControl mb={4}>
-                  <FormLabel>Codice SDI</FormLabel>
+                  <FormLabel>{t('sdiCode')}</FormLabel>
                  <Input type="text" value={codiceSdi} onChange={(e) => setCodiceSdi(e.target.value)} required />
               </FormControl>
-              <Button colorScheme="teal" type="submit">{isEditing ? 'Salva modifiche' : 'Aggiungi'}</Button>
+              <Button colorScheme="teal" type="submit">{isEditing ? 'Salva modifiche' : t('Aggiungi')}</Button>
           </form>
       </Box>
   );

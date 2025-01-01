@@ -8,13 +8,18 @@
     "@emotion/styled": "^11.11.0",
     "axios": "^1.6.0",
     "framer-motion": "^10.16.4",
-    "qrcode.react": "^4.2.0",
+    "i18next": "^22.5.1",
+    "i18next-browser-languagedetector": "^7.0.1",
+    "i18next-http-backend": "^2.2.1",
+    "i18next-xhr-backend": "^3.2.2",
+    "qrcode.react": "^3.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-i18next": "^12.2.0",
     "react-qr-scanner": "^1.0.0-alpha.11",
     "react-router-dom": "^6.18.0",
-    "react-scripts": "^5.0.1",
-    "react-to-print": "^3.0.4"
+    "react-scripts": "5.0.1",
+    "react-to-print": "^2.14.15"
   },
   "scripts": {
     "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts start",

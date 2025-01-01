@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react';
 import axios from '../utils/axiosConfig';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 
 const FormKanban = () => {
@@ -27,6 +28,7 @@ const FormKanban = () => {
     const toast = useToast();
     const navigate = useNavigate();
      const [isEditing, setIsEditing] = useState(false);
+     const { t } = useTranslation();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -123,47 +125,47 @@ const FormKanban = () => {
 
     return (
         <Box p={4}>
-            <Heading mb={4}>{isEditing ? 'Modifica Kanban' : 'Aggiungi Kanban'}</Heading>
+            <Heading mb={4}>{isEditing ? t('Modifica Kanban') : t('Aggiungi Kanban')}</Heading>
             <form onSubmit={handleSubmit}>
                 <FormControl mb={4}>
-                    <FormLabel>Cliente</FormLabel>
-                    <Select placeholder="Seleziona un cliente" value={clienteId} onChange={(e) => setClienteId(e.target.value)} required>
+                    <FormLabel>{t('client')}</FormLabel>
+                    <Select placeholder={t('selectClient')} value={clienteId} onChange={(e) => setClienteId(e.target.value)} required>
                         {clienti.map((cliente) => (
                             <option key={cliente.id} value={cliente.id}>{cliente.ragione_sociale}</option>
                         ))}
                     </Select>
                 </FormControl>
                 <FormControl mb={4}>
-                    <FormLabel>Prodotto</FormLabel>
-                    <Select placeholder="Seleziona un prodotto" value={prodottoCodice} onChange={(e) => setProdottoCodice(e.target.value)} required>
+                    <FormLabel>{t('product')}</FormLabel>
+                    <Select placeholder={t('selectProduct')} value={prodottoCodice} onChange={(e) => setProdottoCodice(e.target.value)} required>
                         {prodotti.map((prodotto) => (
                             <option key={prodotto.codice_prodotto} value={prodotto.codice_prodotto}>{prodotto.descrizione}</option>
                         ))}
                     </Select>
                 </FormControl>
                 <FormControl mb={4}>
-                    <FormLabel>Fornitore</FormLabel>
-                    <Select placeholder="Seleziona un fornitore" value={fornitoreId} onChange={(e) => setFornitoreId(e.target.value)} required>
+                    <FormLabel>{t('supplier')}</FormLabel>
+                    <Select placeholder={t('selectSupplier')} value={fornitoreId} onChange={(e) => setFornitoreId(e.target.value)} required>
                          {fornitori.map((fornitore) => (
                              <option key={fornitore.id} value={fornitore.id}>{fornitore.ragione_sociale}</option>
                         ))}
                     </Select>
                 </FormControl>
                 <FormControl mb={4}>
-                    <FormLabel>Quantità per cartellino</FormLabel>
+                    <FormLabel>{t('quantity')}</FormLabel>
                     <Input type="number" value={quantita} onChange={(e) => setQuantita(e.target.value)} required />
                 </FormControl>
                 <FormControl mb={4}>
-                    <FormLabel>Tipo Contenitore</FormLabel>
+                    <FormLabel>{t('type')}</FormLabel>
                     <Input type="text" value={tipoContenitore} onChange={(e) => setTipoContenitore(e.target.value)} required />
                 </FormControl>
                 {!isEditing && (
                     <FormControl mb={4}>
-                       <FormLabel>Numero di cartellini da creare</FormLabel>
+                       <FormLabel>{t('numberOfCards')}</FormLabel>
                         <Input type="number" value={numCartellini} onChange={(e) => setNumCartellini(e.target.value)} required />
                    </FormControl>
                 )}
-                <Button colorScheme="teal" type="submit">{isEditing ? 'Salva modifiche' : 'Aggiungi'}</Button>
+                <Button colorScheme="teal" type="submit">{isEditing ? 'Salva modifiche' : t('Aggiungi')}</Button>
             </form>
         </Box>
     );

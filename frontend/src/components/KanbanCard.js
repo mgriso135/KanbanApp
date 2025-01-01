@@ -7,8 +7,10 @@ import {
     Badge
 } from '@chakra-ui/react';
 import { QRCodeCanvas } from 'qrcode.react';
+import { useTranslation } from 'react-i18next';
 
 const KanbanCard = ({ kanban, children }) => {
+    const { t } = useTranslation();
     const qrCodeValue = `kanbanId:${kanban.id}`; //Genera un qr code contente l'id del kanban.
 
     return (
@@ -20,16 +22,16 @@ const KanbanCard = ({ kanban, children }) => {
             </Flex>
            
             <Flex>
-                <Text fontSize="sm" color="gray.600">Cliente: {kanban.cliente?.ragione_sociale}</Text>
+                <Text fontSize="sm" color="gray.600">{t('customer')}: {kanban.cliente?.ragione_sociale}</Text>
             </Flex>
            <Flex>
-            <Text fontSize="sm" color="gray.600">Fornitore: {kanban.fornitore?.ragione_sociale}</Text>
+            <Text fontSize="sm" color="gray.600">{t('provider')}: {kanban.fornitore?.ragione_sociale}</Text>
             </Flex>
             <Flex>
-               <Text fontSize="sm" color="gray.600">Quantità: {kanban.quantita} - Tipo: {kanban.tipo_contenitore}</Text>
+               <Text fontSize="sm" color="gray.600">{t('quantity')}: {kanban.quantita} - {t('type')}: {kanban.tipo_contenitore}</Text>
             </Flex>
            <Flex>
-            <Text fontSize="xs" color="gray.400">Aggiornato: {new Date(kanban.data_aggiornamento).toLocaleString()}</Text>
+            <Text fontSize="xs" color="gray.400"> {t('lastUpdate')}: {new Date(kanban.data_aggiornamento).toLocaleString()}</Text>
              </Flex>
             <Box mt={2}>
                 {children}
