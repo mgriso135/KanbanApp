@@ -19,8 +19,7 @@ const FornitoreDashboard = () => {
     const [groupedKanban, setGroupedKanban] = useState({});
     const [scanning, setScanning] = useState(false);
      const [scanResult, setScanResult] = useState('');
-      const { t } = useTranslation();
-
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchKanban = async () => {
@@ -64,6 +63,7 @@ const FornitoreDashboard = () => {
                 return 0;
             });
         }
+
         setGroupedKanban(grouped);
     }, [kanbanList]);
 

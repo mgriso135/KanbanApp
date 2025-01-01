@@ -25,6 +25,7 @@ const FormKanban = () => {
     const [quantita, setQuantita] = useState('');
     const [tipoContenitore, setTipoContenitore] = useState('');
     const [numCartellini, setNumCartellini] = useState('');
+    const [leadTime, setLeadTime] = useState('');
     const toast = useToast();
     const navigate = useNavigate();
      const [isEditing, setIsEditing] = useState(false);
@@ -49,6 +50,7 @@ const FormKanban = () => {
                             setFornitoreId(kanban.fornitore_id);
                            setQuantita(kanban.quantita);
                           setTipoContenitore(kanban.tipo_contenitore);
+                          setLeadTime(kanban.lead_time);
                     }
                     else{
                           toast({
@@ -67,6 +69,7 @@ const FormKanban = () => {
                      setQuantita('');
                       setTipoContenitore('');
                      setNumCartellini('');
+                     setLeadTime('');
                 }
             } catch (error) {
                 toast({
@@ -92,6 +95,7 @@ const FormKanban = () => {
                 fornitore_id: parseInt(fornitoreId, 10),
                 quantita: parseInt(quantita, 10),
                 tipo_contenitore: tipoContenitore,
+                lead_time: parseInt(leadTime, 10)
              };
            if(isEditing){
                await axios.put(`/api/kanban/${kanbanId}`, payload);
@@ -158,6 +162,10 @@ const FormKanban = () => {
                 <FormControl mb={4}>
                     <FormLabel>{t('type')}</FormLabel>
                     <Input type="text" value={tipoContenitore} onChange={(e) => setTipoContenitore(e.target.value)} required />
+                </FormControl>
+                 <FormControl mb={4}>
+                    <FormLabel>{t('leadTime')}</FormLabel>
+                     <Input type="number" value={leadTime} onChange={(e) => setLeadTime(e.target.value)} required />
                 </FormControl>
                 {!isEditing && (
                     <FormControl mb={4}>

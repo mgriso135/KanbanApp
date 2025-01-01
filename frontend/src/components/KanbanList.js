@@ -18,6 +18,7 @@ import axios from '../utils/axiosConfig';
 import { Link } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
 import KanbanCard from './KanbanCard';
+import { useTranslation } from 'react-i18next';
 
 const KanbanList = () => {
     const [kanbanList, setKanbanList] = useState([]);
@@ -25,6 +26,7 @@ const KanbanList = () => {
     const [selectedProdotto, setSelectedProdotto] = useState('');
     const toast = useToast();
     const componentRef = useRef();
+    const { t } = useTranslation();
 
     const handlePrintSingle = useReactToPrint({
         content: (kanbanId) => () => componentRef.current.querySelector(`#kanban-${kanbanId}`),
@@ -80,16 +82,16 @@ const KanbanList = () => {
     return (
         <Box p={4}>
           <Flex mb={4} align="center">
-              <Heading>Lista Kanban Attivi</Heading>
+              <Heading>{t('kanbanList')}</Heading>
                 <Spacer/>
                 <Link to="/aggiungi-kanban">
-                   <Button colorScheme="teal" mr={2}>Aggiungi Kanban</Button>
+                   <Button colorScheme="teal" mr={2}>{t('add')} {t('kanban')}</Button>
                   </Link>
           </Flex>
            <Flex mb={4} align="center">
                <Box mr={2}>
                    <Heading size="md">Filtra per prodotto:</Heading>
-                    <Select placeholder="Seleziona un prodotto" value={selectedProdotto} onChange={(e) => setSelectedProdotto(e.target.value)}>
+                    <Select placeholder={t('selectProduct')} value={selectedProdotto} onChange={(e) => setSelectedProdotto(e.target.value)}>
                         {prodotti.map((prodotto) => (
                             <option key={prodotto.codice_prodotto} value={prodotto.descrizione}>{prodotto.descrizione}</option>
                         ))}
@@ -100,12 +102,12 @@ const KanbanList = () => {
             <Table variant="striped" colorScheme="gray">
               <Thead>
                <Tr>
-                    <Th>ID</Th>
-                    <Th>Prodotto</Th>
-                    <Th>Cliente</Th>
-                   <Th>Fornitore</Th>
-                    <Th>Modifica</Th>
-                   <Th>Elimina</Th>
+                    <Th>{t('id')}</Th>
+                    <Th>{t('product')}</Th>
+                    <Th>{t('customer')}</Th>
+                   <Th>{t('provider')}</Th>
+                    <Th>{t('add')}</Th>
+                   <Th>{t('empty')}</Th>
                      <Th>Stampa</Th>
                </Tr>
               </Thead>
@@ -118,11 +120,11 @@ const KanbanList = () => {
                         <Td>{kanban.fornitore?.ragione_sociale}</Td>
                        <Td>
                              <Link to={`/aggiungi-kanban/${kanban.id}`}>
-                                  <Button size="sm" colorScheme="teal">Modifica</Button>
+                                  <Button size="sm" colorScheme="teal">{t('add')}</Button>
                              </Link>
                          </Td>
                          <Td>
-                               <Button size="sm" colorScheme="red" onClick={() => handleEliminaKanban(kanban.id)}>Elimina</Button>
+                               <Button size="sm" colorScheme="red" onClick={() => handleEliminaKanban(kanban.id)}>{t('empty')}</Button>
                             </Td>
                            <Td>
                                  <Button size="sm" colorScheme="blue" onClick={()=> handlePrintSingle(kanban.id)}>Stampa</Button>
@@ -132,7 +134,7 @@ const KanbanList = () => {
                 </Tbody>
              </Table>
            </Box>
-             <div style={{ display: 'none' }}>
+            <div style={{ display: 'none' }}>
                 <div ref={componentRef}>
                   {filteredKanbanList.map((kanban) => (
                        <div id={`kanban-${kanban.id}`}>
@@ -140,7 +142,7 @@ const KanbanList = () => {
                         </div>
                    ))}
                </div>
-            </div>
+             </div>
         </Box>
     );
 };

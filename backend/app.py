@@ -3,6 +3,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}}, methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
@@ -11,6 +12,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'ka
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'your_secret_key'
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 # Modelli del Database
 class Cliente(db.Model):
@@ -30,8 +32,7 @@ class Fornitore(db.Model):
 class Prodotto(db.Model):
     codice_prodotto = db.Column(db.String(50), primary_key=True)
     descrizione = db.Column(db.String(200), nullable=False)
-    lead_time = db.Column(db.Integer, nullable=False)
-
+   
 class Kanban(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     cliente_id = db.Column(db.Integer, db.ForeignKey('cliente.id'), nullable=False)
@@ -41,6 +42,7 @@ class Kanban(db.Model):
     tipo_contenitore = db.Column(db.String(50), nullable=False)
     stato = db.Column(db.String(20), nullable=False, default='Attivo')
     data_aggiornamento = db.Column(db.DateTime, default=datetime.utcnow)
+    lead_time = db.Column(db.Integer, nullable = False, default = 0)
 
     cliente = db.relationship('Cliente', backref=db.backref('kanbans', lazy=True))
     prodotto = db.relationship('Prodotto', backref=db.backref('kanbans', lazy=True))
@@ -56,8 +58,8 @@ class KanbanHistory(db.Model):
 
 
 # Creazione delle tabelle nel database (solo la prima volta)
-with app.app_context():
-    db.create_all()
+#with app.app_context():
+#    db.create_all()
 
 # API per Clienti
 @app.route('/api/clienti', methods=['GET', 'POST'])
@@ -123,10 +125,10 @@ def modifica_fornitore(fornitore_id):
 def gestisci_prodotti():
     if request.method == 'GET':
         prodotti_list = Prodotto.query.all()
-        return jsonify([{'codice_prodotto': p.codice_prodotto, 'descrizione': p.descrizione, 'lead_time': p.lead_time} for p in prodotti_list])
+        return jsonify([{'codice_prodotto': p.codice_prodotto, 'descrizione': p.descrizione} for p in prodotti_list])
     elif request.method == 'POST':
         data = request.get_json()
-        nuovo_prodotto = Prodotto(codice_prodotto=data['codice_prodotto'], descrizione=data['descrizione'], lead_time=data['lead_time'])
+        nuovo_prodotto = Prodotto(codice_prodotto=data['codice_prodotto'], descrizione=data['descrizione'])
         db.session.add(nuovo_prodotto)
         db.session.commit()
         return jsonify({'message': 'Prodotto creato con successo!', 'codice_prodotto': nuovo_prodotto.codice_prodotto}), 201
@@ -139,6 +141,7 @@ def gestisci_kanban():
         return jsonify([{'id': k.id, 'cliente_id': k.cliente_id, 'prodotto_codice': k.prodotto_codice,
                          'fornitore_id': k.fornitore_id, 'quantita': k.quantita, 'tipo_contenitore': k.tipo_contenitore,
                          'stato': k.stato, 'data_aggiornamento': k.data_aggiornamento.isoformat(),
+                         'lead_time': k.lead_time,
                          'cliente': {'ragione_sociale': k.cliente.ragione_sociale} if k.cliente else None,
                          'prodotto': {'descrizione': k.prodotto.descrizione} if k.prodotto else None,
                          'fornitore': {'ragione_sociale': k.fornitore.ragione_sociale} if k.fornitore else None
@@ -146,12 +149,11 @@ def gestisci_kanban():
     elif request.method == 'POST':
         data = request.get_json()
         num_cartellini = int(data.get('num_cartellini', 1))
-
         created_kanbans = []
         for _ in range(num_cartellini):
           nuovo_kanban = Kanban(cliente_id=data['cliente_id'], prodotto_codice=data['prodotto_codice'],
                               fornitore_id=data['fornitore_id'], quantita=data['quantita'],
-                              tipo_contenitore=data['tipo_contenitore'])
+                              tipo_contenitore=data['tipo_contenitore'], lead_time = int(data['lead_time']))
           db.session.add(nuovo_kanban)
           db.session.flush()
           created_kanbans.append({'id': nuovo_kanban.id})
@@ -171,6 +173,7 @@ def modifica_kanban(kanban_id):
                kanban.fornitore_id = data['fornitore_id']
                kanban.quantita = data['quantita']
                kanban.tipo_contenitore = data['tipo_contenitore']
+               kanban.lead_time = int(data['lead_time'])
                db.session.commit()
                return jsonify({'message': 'Kanban modificato con successo!'}), 200
              else:
@@ -221,6 +224,7 @@ def get_kanban_cliente(cliente_id):
                    'fornitore_id': k.fornitore_id, 'quantita': k.quantita,
                    'tipo_contenitore': k.tipo_contenitore, 'stato': k.stato,
                    'data_aggiornamento': k.data_aggiornamento.isoformat(),
+                   'lead_time': k.lead_time,
                    'cliente': {'ragione_sociale': k.cliente.ragione_sociale} if k.cliente else None,
                    'prodotto': {'descrizione': k.prodotto.descrizione} if k.prodotto else None
                    } for k in kanban_list])
@@ -234,6 +238,7 @@ def get_kanban_fornitore(fornitore_id):
                    'fornitore_id': k.fornitore_id, 'quantita': k.quantita,
                    'tipo_contenitore': k.tipo_contenitore, 'stato': k.stato,
                    'data_aggiornamento': k.data_aggiornamento.isoformat(),
+                    'lead_time': k.lead_time,
                     'cliente': {'ragione_sociale': k.cliente.ragione_sociale} if k.cliente else None,
                    'prodotto': {'descrizione': k.prodotto.descrizione} if k.prodotto else None,
                    } for k in kanban_list])
@@ -254,7 +259,8 @@ def gestisci_kanban_history():
                       'cliente': {'ragione_sociale': entry.kanban.cliente.ragione_sociale} if entry.kanban and entry.kanban.cliente else None,
                       'fornitore': {'ragione_sociale': entry.kanban.fornitore.ragione_sociale} if entry.kanban and entry.kanban.fornitore else None,
                       'quantita': entry.kanban.quantita if entry.kanban else None,
-                      'tipo_contenitore': entry.kanban.tipo_contenitore if entry.kanban else None
+                      'tipo_contenitore': entry.kanban.tipo_contenitore if entry.kanban else None,
+                      'lead_time': entry.kanban.lead_time if entry.kanban else None
                       }
           }
       )

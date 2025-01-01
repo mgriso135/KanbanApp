@@ -15,10 +15,10 @@ import { useTranslation } from 'react-i18next';
 const FormProdotto = () => {
   const [codiceProdotto, setCodiceProdotto] = useState('');
   const [descrizione, setDescrizione] = useState('');
-    const [leadTime, setLeadTime] = useState('');
     const toast = useToast();
     const navigate = useNavigate();
     const { t } = useTranslation();
+
 
   const handleSubmit = async (e) => {
       e.preventDefault();
@@ -26,7 +26,6 @@ const FormProdotto = () => {
           await axios.post('/api/prodotti', {
               codice_prodotto: codiceProdotto,
               descrizione: descrizione,
-               lead_time: parseInt(leadTime, 10)
           });
             toast({
                 title: 'Prodotto creato',
@@ -59,10 +58,6 @@ const FormProdotto = () => {
                   <FormLabel>Descrizione</FormLabel>
                   <Input type="text" value={descrizione} onChange={(e) => setDescrizione(e.target.value)} required />
               </FormControl>
-              <FormControl mb={4}>
-                  <FormLabel>Lead Time</FormLabel>
-                   <Input type="number" value={leadTime} onChange={(e) => setLeadTime(e.target.value)} required />
-               </FormControl>
               <Button colorScheme="teal" type="submit">{t('add')}</Button>
           </form>
        </Box>
