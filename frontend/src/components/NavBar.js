@@ -54,9 +54,6 @@ const NavBar = () => {
                     <MenuItem as={Link} to="/kanban-list" bg="gray.700">
                        {t('kanbanList')}
                     </MenuItem>
-                  <MenuItem as={Link} to="/aggiungi-kanban" bg="gray.700">
-                   {t('kanban')}
-                  </MenuItem>
                   <MenuItem as={Link} to="/kanban-history" bg="gray.700">
                     {t('kanbanHistory')}
                   </MenuItem>

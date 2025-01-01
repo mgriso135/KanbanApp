@@ -46,6 +46,15 @@ class Kanban(db.Model):
     prodotto = db.relationship('Prodotto', backref=db.backref('kanbans', lazy=True))
     fornitore = db.relationship('Fornitore', backref=db.backref('kanbans', lazy=True))
 
+class KanbanHistory(db.Model):
+     id = db.Column(db.Integer, primary_key=True)
+     kanban_id = db.Column(db.Integer, db.ForeignKey('kanban.id'), nullable=False)
+     stato = db.Column(db.String(20), nullable=False)
+     data_aggiornamento = db.Column(db.DateTime, default=datetime.utcnow)
+
+     kanban = db.relationship('Kanban', backref=db.backref('history', lazy=True))
+
+
 # Creazione delle tabelle nel database (solo la prima volta)
 with app.app_context():
     db.create_all()
@@ -130,7 +139,7 @@ def gestisci_kanban():
         return jsonify([{'id': k.id, 'cliente_id': k.cliente_id, 'prodotto_codice': k.prodotto_codice,
                          'fornitore_id': k.fornitore_id, 'quantita': k.quantita, 'tipo_contenitore': k.tipo_contenitore,
                          'stato': k.stato, 'data_aggiornamento': k.data_aggiornamento.isoformat(),
-                          'cliente': {'ragione_sociale': k.cliente.ragione_sociale} if k.cliente else None,
+                         'cliente': {'ragione_sociale': k.cliente.ragione_sociale} if k.cliente else None,
                          'prodotto': {'descrizione': k.prodotto.descrizione} if k.prodotto else None,
                          'fornitore': {'ragione_sociale': k.fornitore.ragione_sociale} if k.fornitore else None
                         } for k in kanban_list])
@@ -192,6 +201,8 @@ def aggiorna_stato_kanban(kanban_id):
              if data:
                kanban_card.stato = data['stato']
                kanban_card.data_aggiornamento = datetime.utcnow()
+               history_entry = KanbanHistory(kanban_id = kanban_card.id, stato = kanban_card.stato)
+               db.session.add(history_entry)
                db.session.commit()
                return jsonify({'message': 'Stato kanban aggiornato con successo'}), 200
              else:
@@ -230,25 +241,23 @@ def get_kanban_fornitore(fornitore_id):
 # API per Kanban History
 @app.route('/api/kanban/history', methods=['GET'])
 def gestisci_kanban_history():
-    kanban_list = Kanban.query.all()
+    history_list = KanbanHistory.query.all()
     history = []
-    for kanban in kanban_list:
+    for entry in history_list:
       history.append(
           {
-            'id': kanban.id,
-             'cliente_id': kanban.cliente_id,
-             'prodotto_codice': kanban.prodotto_codice,
-             'fornitore_id': kanban.fornitore_id,
-             'quantita': kanban.quantita,
-             'tipo_contenitore': kanban.tipo_contenitore,
-             'stato': kanban.stato,
-             'data_aggiornamento': kanban.data_aggiornamento.isoformat(),
-             'cliente': {'ragione_sociale': kanban.cliente.ragione_sociale} if kanban.cliente else None,
-             'prodotto': {'descrizione': kanban.prodotto.descrizione} if kanban.prodotto else None,
-             'fornitore': {'ragione_sociale': kanban.fornitore.ragione_sociale} if kanban.fornitore else None
+            'id': entry.id,
+            'kanban_id': entry.kanban_id,
+            'stato': entry.stato,
+            'data_aggiornamento': entry.data_aggiornamento.isoformat(),
+            'kanban':{'prodotto': {'descrizione': entry.kanban.prodotto.descrizione} if entry.kanban and entry.kanban.prodotto else None,
+                      'cliente': {'ragione_sociale': entry.kanban.cliente.ragione_sociale} if entry.kanban and entry.kanban.cliente else None,
+                      'fornitore': {'ragione_sociale': entry.kanban.fornitore.ragione_sociale} if entry.kanban and entry.kanban.fornitore else None,
+                      'quantita': entry.kanban.quantita if entry.kanban else None,
+                      'tipo_contenitore': entry.kanban.tipo_contenitore if entry.kanban else None
+                      }
           }
       )
-
     return jsonify(history)
 
 if __name__ == '__main__':
