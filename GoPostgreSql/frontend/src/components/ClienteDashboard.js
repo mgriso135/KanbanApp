@@ -122,24 +122,23 @@ const ClienteDashboard = () => {
                />
                }
               {Object.keys(groupedKanban).length === 0 ? (
-                    <Box>{t('noKanbanFound')}</Box>
-                ) : (
-                    Object.keys(groupedKanban).map((prodottoCodice) => (
-                       <Box key={prodottoCodice} mb={6}>
-                           <Heading size="md" mb={2}>{prodottoCodice}</Heading>
-                             <Flex wrap="wrap" >
-                               {groupedKanban[prodottoCodice].map((kanban) => (
-                                      <KanbanCard key={kanban.id} kanban={kanban}>
-                                        {kanban.stato === 'Attivo' &&
-                                          <Button colorScheme="red" onClick={() => handleSvuotaKanban(kanban.id)} >{t('empty')}</Button>
-                                        }
-                                    </KanbanCard>
-                                ))
-                             }
-                             </Flex>
-                        </Box>
+                  <Box>{t('noKanbanFound')}</Box>
+              ) : (
+                 Object.keys(groupedKanban).map((prodottoCodice) => (
+                     <Box key={prodottoCodice} mb={6}>
+                          <Heading size="md" mb={2}>{prodottoCodice}</Heading>
+                          <Flex wrap="wrap">
+                              {groupedKanban[prodottoCodice].map((kanban) => (
+                                <KanbanCard key={kanban.id} kanban={kanban}>
+                                    {kanban.stato === 'Attivo' &&
+                                      <Button colorScheme="red" onClick={() => handleSvuotaKanban(kanban.id)} >{t('empty')}</Button>
+                                    }
+                                </KanbanCard>
+                               ))}
+                          </Flex>
+                      </Box>
                    ))
-             )}
+              )}
         </Box>
     );
 };

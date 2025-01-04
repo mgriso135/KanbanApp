@@ -49,12 +49,15 @@ const NavBar = () => {
                   <MenuItem as={Link} to="/fornitori-list" bg="gray.700">
                    Gestione Fornitori
                   </MenuItem>
-                    <MenuItem as={Link} to="/prodotti-list" bg="gray.700">
-                     Gestione Prodotti
+                  <MenuItem as={Link} to="/aggiungi-prodotto" bg="gray.700">
+                    Prodotto
                   </MenuItem>
                     <MenuItem as={Link} to="/kanban-list" bg="gray.700">
                        {t('kanbanList')}
                     </MenuItem>
+                  <MenuItem as={Link} to="/aggiungi-kanban" bg="gray.700">
+                   {t('kanban')}
+                  </MenuItem>
                   <MenuItem as={Link} to="/kanban-history" bg="gray.700">
                     {t('kanbanHistory')}
                   </MenuItem>
@@ -67,17 +70,17 @@ const NavBar = () => {
             <Route path="/" element={<KanbanDashboard />} />
             <Route path="/clienti/:clienteId" element={<ClienteDashboard />} />
             <Route path="/fornitori/:fornitoreId" element={<FornitoreDashboard />} />
-             <Route path="/aggiungi-cliente" element={<FormCliente />} />
-            <Route path="/aggiungi-cliente/:clienteId" element={<FormCliente />} />
+            <Route path="/aggiungi-cliente" element={<FormCliente />} />
+             <Route path="/aggiungi-cliente/:clienteId" element={<FormCliente />} />
              <Route path="/aggiungi-fornitore" element={<FormFornitore />} />
              <Route path="/aggiungi-fornitore/:fornitoreId" element={<FormFornitore />} />
-             <Route path="/aggiungi-prodotto" element={<FormProdotto />} />
-             <Route path="/aggiungi-kanban" element={<FormKanban />} />
+            <Route path="/aggiungi-prodotto" element={<FormProdotto />} />
+            <Route path="/aggiungi-kanban" element={<FormKanban />} />
             <Route path="/aggiungi-kanban/:kanbanId" element={<FormKanban />} />
             <Route path="/kanban-history" element={<KanbanHistory />} />
             <Route path="/clienti-list" element={<ClientiList />} />
-             <Route path="/fornitori-list" element={<FornitoriList />} />
-            <Route path="/kanban-list" element={<KanbanList />} />
+            <Route path="/fornitori-list" element={<FornitoriList />} />
+             <Route path="/kanban-list" element={<KanbanList />} />
             <Route path="/prodotti-list" element={<ProductList />} />
         </Routes>
       </Router>
