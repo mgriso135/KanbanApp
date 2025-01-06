@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"kanban/models"
+	//"kanban/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
