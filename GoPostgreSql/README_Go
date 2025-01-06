@@ -1,1 +1,181 @@
-sddd
+# Electronic Kanban Application (Go + PostgreSQL + React)
+
+This is a simple electronic Kanban application designed to manage products, customers, suppliers, and Kanban cards. It uses a Go backend with Gin and GORM, a PostgreSQL database, and a React frontend.
+
+## Table of Contents
+
+- [Italian](#italian)
+  - [Introduzione](#introduzione)
+  - [Il Prompt Iniziale](#il-prompt-iniziale)
+  - [Modifiche Successive](#modifiche-successive)
+  - [Tecnologie Utilizzate](#tecnologie-utilizzate)
+  - [Come Eseguire l'Applicazione](#come-eseguire-lapplicazione)
+    - [Backend (Go)](#backend-go)
+    - [Frontend (React)](#frontend-react)
+  - [Funzionalità](#funzionalità)
+- [English](#english)
+  - [Introduction](#introduction)
+    - [The Initial Prompt](#the-initial-prompt)
+    - [Next Modifications](#next-modifications)
+  - [Technologies Used](#technologies-used)
+  - [How to Run the Application](#how-to-run-the-application)
+    - [Backend (Go)](#backend-go-1)
+    - [Frontend (React)](#frontend-react-1)
+  - [Features](#features)
+
+## Italian
+
+### Introduzione
+Questa è un'applicazione Kanban elettronica semplice ma efficace, progettata per gestire prodotti, clienti, fornitori e cartellini Kanban. È stata creata con l'aiuto di Google AI Studio e utilizza un backend in Go con Gin e GORM, un database PostgreSQL e un frontend in React.
+
+### Il Prompt Iniziale
+Il progetto è nato a partire da un singolo prompt che definiva in grandi linee le funzionalità di un'applicazione Kanban:
+
+
+### Modifiche Successive
+Dopo questo prompt iniziale, il progetto è stato sviluppato attraverso una serie di modifiche successive, includendo:
+*  l'uso di una interfaccia a prompt all'inizio per il backend
+*  l'aggiunta di dashboard per clienti e fornitori
+*  la gestione dello stato dei cartellini kanban
+*  la creazione di più cartellini
+*  l'uso di un frontend grafico, e infine di un database SQL.
+* l'aggiunta della modifica ai clienti e ai fornitori e della lista clienti e fornitori
+* l'aggiunta della gestione dei Lead Time (specifici per ogni kanban).
+* la possibilità di filtrare per prodotto nella lista kanban
+* la possibilità di eliminare e stampare i cartellini kanban
+* la gestione della history del kanban e del filtro per prodotto
+* l'aggiunta del selettore per la lingua
+* l'aggiunta della lista e della modifica dei prodotti
+* L'uso di `go`, `gorm` and `postgresql` on the backend.
+
+### Tecnologie Utilizzate
+*   **Backend:** Go, Gin, GORM, PostgreSQL
+*   **Frontend:** Node.js, React, Chakra UI, Axios, react-qr-scanner, react-to-print, i18next, react-i18next, i18next-browser-languagedetector, i18next-http-backend
+
+### Come Eseguire l'Applicazione
+
+#### Backend (Go)
+
+1.  Assicurati di avere **Go 1.19 o superiore** installato.
+2.  Naviga nella cartella `backend` dal tuo terminale.
+3.  Installa le dipendenze:
+      ```bash
+        go get github.com/gin-gonic/gin
+        go get gorm.io/gorm
+        go get gorm.io/driver/postgres
+        go get github.com/joho/godotenv
+        go get github.com/swaggo/swag/cmd/swag
+     ```
+4.  Crea un file `.env` e aggiungi le configurazioni necessarie per il database.
+5.  Avvia il backend:
+    ```bash
+    go build -o myapp
+    ./myapp
+    ```
+   Il backend sarà in esecuzione su `http://127.0.0.1:5000` (o la porta definita nel tuo file `.env`).
+
+#### Frontend (React)
+1.  Assicurati di avere **Node.js** e **npm** installati.
+2.  Naviga nella cartella `frontend` dal tuo terminale.
+3.  Installa le dipendenze:
+    ```bash
+    npm install
+    ```
+4.  Avvia il frontend:
+    ```bash
+    npm start
+    ```
+   Il frontend sarà in esecuzione su `http://localhost:3000`.
+
+### Funzionalità
+
+*   Gestione di prodotti, clienti e fornitori.
+*   Creazione e gestione dei cartellini Kanban associati a prodotti, clienti e fornitori.
+*   Monitoraggio dello stato dei cartellini (attivo, svuotato, in ripristino).
+*   La proprietà `lead_time` è specifica per ogni cartellino Kanban.
+*   Dashboard per clienti e fornitori con la visualizzazione dei rispettivi cartellini e il riordino degli stessi.
+*   Possibilità di scansionare un QR code per svuotare o rendere attivi i cartellini.
+*   History per monitorare lo stato dei cartellini e per filtrare per prodotto.
+*   Modifica e creazione di clienti, fornitori e cartellini Kanban.
+*   Visualizzazione e gestione dei prodotti.
+*   Supporto multilingua (italiano, inglese, spagnolo e cinese)
+
+## English
+
+### Introduction
+
+This is a simple but effective electronic Kanban application designed to manage products, customers, suppliers, and Kanban cards. It was created with the help of Google AI Studio and uses a Go backend with Gin and GORM, a PostgreSQL database, and a React frontend.
+
+#### The Initial Prompt
+The project started with a single prompt that outlined the functionalities of a Kanban application:
+
+
+### Next Modifications
+
+After the initial prompt, the project was developed through a series of successive modifications including:
+* the use of a prompt interface for the backend,
+* the addition of dashboards for customers and suppliers
+* the management of the status of kanban cards
+* the creation of multiple cards
+* the implementation of a graphical frontend, and finally a SQL database.
+* the addition of the modification form and of customer and suppliers lists.
+* the addition of lead time to the kanban card
+* the possibility to filter the kanban list by product
+* the possibility to delete and print single kanban card
+* the management of the kanban history and the filter by product
+* the addition of a language selector
+* the addition of the list and modification of products
+* The use of Go and Postgresql on the backend
+
+### Technologies Used
+
+*   **Backend:** Go, Gin, GORM, PostgreSQL
+*   **Frontend:** Node.js, React, Chakra UI, Axios, react-qr-scanner, react-to-print, i18next, react-i18next, i18next-browser-languagedetector, i18next-http-backend
+
+### How to Run the Application
+
+#### Backend (Go)
+
+1.  Make sure you have **Go 1.19 or higher** installed.
+2.  Navigate to the `backend` folder from your terminal.
+3. Install the dependencies:
+      ```bash
+       go get github.com/gin-gonic/gin
+       go get gorm.io/gorm
+       go get gorm.io/driver/postgres
+       go get github.com/joho/godotenv
+       go get github.com/swaggo/swag/cmd/swag
+     ```
+4. Create a file `.env` to configure your database connection
+5. Avvia il backend:
+    ```bash
+    go build -o myapp
+    ./myapp
+    ```
+   The backend will be running on `http://127.0.0.1:5000` (or the port defined in your `.env`).
+
+#### Frontend (React)
+1.  Make sure you have **Node.js** and **npm** installed.
+2.  Navigate to the `frontend` folder from your terminal.
+3.  Install the dependencies:
+    ```bash
+    npm install
+    ```
+4.  Avvia il frontend:
+    ```bash
+    npm start
+    ```
+   The frontend will be running on `http://localhost:3000`.
+
+### Features
+
+*   Management of products, customers, and suppliers.
+*   Creation and management of Kanban cards associated with products, customers, and suppliers.
+*   Monitoring of the status of Kanban cards (active, emptied, in restoration).
+*   The `lead_time` attribute is specific for every kanban card.
+*   Dashboard for customers and suppliers to view their respective Kanban cards, with the ability to reorder the cards.
+*   Possibility of scanning a qr code to activate or empty a kanban.
+*   History to monitor the status of the kanban cards and to filter by product.
+*   Modification and creation of customers, suppliers and kanban cards.
+*   Visualization and management of products.
+*   Multilanguage support (Italian, English, Spanish, and Chinese).
