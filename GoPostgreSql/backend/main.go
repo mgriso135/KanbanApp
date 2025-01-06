@@ -3,10 +3,11 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
 	"os"
+	"strconv"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -115,8 +116,12 @@ func connectDb() {
 			Colorful:      true,        // Disable color
 		},
 	)
+	dbPort, err := strconv.Atoi(conf.DbPort)
+	if err != nil {
+		panic(err)
+	}
 
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", conf.DbHost, conf.DbUser, conf.DbPassword, conf.DbName, conf.DbPort)
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable", conf.DbHost, conf.DbUser, conf.DbPassword, conf.DbName, dbPort)
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: newLogger,
 	})
@@ -130,8 +135,16 @@ func connectDb() {
 func main() {
 	fmt.Println("Starting server on port " + conf.Port)
 	router := gin.Default()
-	router.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "hello"})
-	})
+
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
+
+	setRoutes(router)
+
 	router.Run(":" + conf.Port)
 }

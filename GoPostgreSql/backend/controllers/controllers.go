@@ -1,11 +1,12 @@
 package controllers
 
 import (
-	"kanban/db"
-	"kanban/models"
 	"net/http"
 	"strconv"
 	"time"
+
+	"kanban/db"
+	"kanban/models"
 
 	"github.com/gin-gonic/gin"
 )
