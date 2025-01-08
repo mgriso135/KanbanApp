@@ -1,181 +1,144 @@
-# Electronic Kanban Application (Go + PostgreSQL + React)
+# Electronic Kanban Backend (Go)
 
-This is a simple electronic Kanban application designed to manage products, customers, suppliers, and Kanban cards. It uses a Go backend with Gin and GORM, a PostgreSQL database, and a React frontend.
+This repository contains the backend API for an electronic Kanban application, built using Go, Gin, and GORM.
 
-## Table of Contents
+## Features
 
-- [Italian](#italian)
-  - [Introduzione](#introduzione)
-  - [Il Prompt Iniziale](#il-prompt-iniziale)
-  - [Modifiche Successive](#modifiche-successive)
-  - [Tecnologie Utilizzate](#tecnologie-utilizzate)
-  - [Come Eseguire l'Applicazione](#come-eseguire-lapplicazione)
-    - [Backend (Go)](#backend-go)
-    - [Frontend (React)](#frontend-react)
-  - [Funzionalità](#funzionalità)
-- [English](#english)
-  - [Introduction](#introduction)
-    - [The Initial Prompt](#the-initial-prompt)
-    - [Next Modifications](#next-modifications)
-  - [Technologies Used](#technologies-used)
-  - [How to Run the Application](#how-to-run-the-application)
-    - [Backend (Go)](#backend-go-1)
-    - [Frontend (React)](#frontend-react-1)
-  - [Features](#features)
+-   **RESTful API:** Provides endpoints to manage clients, suppliers, products, and Kanban cards.
+-   **Database Interaction:** Uses GORM to interact with a PostgreSQL database.
+-   **Soft Deletes:** Implements a soft delete approach for Kanban records using an `IsActive` flag.
+-   **Kanban History:** Tracks the changes of each kanban with a dedicated history record.
+-   **CORS:** Configured for cross-origin requests to enable frontend integration.
+- **Go Modules:** Uses Go modules for dependency management.
 
-## Italian
+## Technologies Used
 
-### Introduzione
-Questa è un'applicazione Kanban elettronica semplice ma efficace, progettata per gestire prodotti, clienti, fornitori e cartellini Kanban. È stata creata con l'aiuto di Google AI Studio e utilizza un backend in Go con Gin e GORM, un database PostgreSQL e un frontend in React.
+-   **Go:** Programming language for backend development.
+-   **Gin:** Web framework for building the API.
+-   **GORM:** Object-relational mapper for database interactions.
+-   **PostgreSQL:** Database for storing application data.
+-   **godotenv:** Loads environment variables from a `.env` file.
 
-### Il Prompt Iniziale
-Il progetto è nato a partire da un singolo prompt che definiva in grandi linee le funzionalità di un'applicazione Kanban:
+## Setup
 
+### Prerequisites
 
-### Modifiche Successive
-Dopo questo prompt iniziale, il progetto è stato sviluppato attraverso una serie di modifiche successive, includendo:
-*  l'uso di una interfaccia a prompt all'inizio per il backend
-*  l'aggiunta di dashboard per clienti e fornitori
-*  la gestione dello stato dei cartellini kanban
-*  la creazione di più cartellini
-*  l'uso di un frontend grafico, e infine di un database SQL.
-* l'aggiunta della modifica ai clienti e ai fornitori e della lista clienti e fornitori
-* l'aggiunta della gestione dei Lead Time (specifici per ogni kanban).
-* la possibilità di filtrare per prodotto nella lista kanban
-* la possibilità di eliminare e stampare i cartellini kanban
-* la gestione della history del kanban e del filtro per prodotto
-* l'aggiunta del selettore per la lingua
-* l'aggiunta della lista e della modifica dei prodotti
-* L'uso di `go`, `gorm` and `postgresql` on the backend.
+-   [Go](https://go.dev/dl/) (version 1.20 or higher)
+-   [PostgreSQL](https://www.postgresql.org/)
+-   A `.env` file in the `backend/` directory with your database connection details (see `.env.example`).
 
-### Tecnologie Utilizzate
-*   **Backend:** Go, Gin, GORM, PostgreSQL
-*   **Frontend:** Node.js, React, Chakra UI, Axios, react-qr-scanner, react-to-print, i18next, react-i18next, i18next-browser-languagedetector, i18next-http-backend
+### Installation
 
-### Come Eseguire l'Applicazione
+1.  **Clone the repository:**
 
-#### Backend (Go)
+    ```bash
+    git clone <repository-url>
+    cd <project-folder>/backend
+    ```
 
-1.  Assicurati di avere **Go 1.19 o superiore** installato.
-2.  Naviga nella cartella `backend` dal tuo terminale.
-3.  Installa le dipendenze:
-      ```bash
-        go get github.com/gin-gonic/gin
-        go get gorm.io/gorm
-        go get gorm.io/driver/postgres
-        go get github.com/joho/godotenv
-        go get github.com/swaggo/swag/cmd/swag
-     ```
-4.  Crea un file `.env` e aggiungi le configurazioni necessarie per il database.
-5.  Avvia il backend:
+2.  **Create a `.env` file:**
+    * Create a `.env` file in the `backend/` directory, and add the following variables:
+    ```
+        PORT=5000
+        DB_HOST=<YOUR_DB_HOST>
+        DB_USER=<YOUR_DB_USER>
+        DB_PASSWORD=<YOUR_DB_PASSWORD>
+        DB_NAME=<YOUR_DB_NAME>
+        DB_PORT=<YOUR_DB_PORT>
+    ```
+        Replace the placeholders with your actual database credentials.
+
+3.  **Initialize Go Modules:**
+    ```bash
+    go mod init kanban
+    go mod tidy
+    ```
+
+4.  **Build the application:**
     ```bash
     go build -o myapp
-    ./myapp
     ```
-   Il backend sarà in esecuzione su `http://127.0.0.1:5000` (o la porta definita nel tuo file `.env`).
 
-#### Frontend (React)
-1.  Assicurati di avere **Node.js** e **npm** installati.
-2.  Naviga nella cartella `frontend` dal tuo terminale.
-3.  Installa le dipendenze:
-    ```bash
-    npm install
-    ```
-4.  Avvia il frontend:
-    ```bash
-    npm start
-    ```
-   Il frontend sarà in esecuzione su `http://localhost:3000`.
+### Running the Application
+   ```bash
+   ./myapp
 
-### Funzionalità
+   The server should now be running on http://localhost:5000.
 
-*   Gestione di prodotti, clienti e fornitori.
-*   Creazione e gestione dei cartellini Kanban associati a prodotti, clienti e fornitori.
-*   Monitoraggio dello stato dei cartellini (attivo, svuotato, in ripristino).
-*   La proprietà `lead_time` è specifica per ogni cartellino Kanban.
-*   Dashboard per clienti e fornitori con la visualizzazione dei rispettivi cartellini e il riordino degli stessi.
-*   Possibilità di scansionare un QR code per svuotare o rendere attivi i cartellini.
-*   History per monitorare lo stato dei cartellini e per filtrare per prodotto.
-*   Modifica e creazione di clienti, fornitori e cartellini Kanban.
-*   Visualizzazione e gestione dei prodotti.
-*   Supporto multilingua (italiano, inglese, spagnolo e cinese)
+API Endpoints
 
-## English
+GET /api/clienti: Get all clients.
 
-### Introduction
+POST /api/clienti: Create a new client.
 
-This is a simple but effective electronic Kanban application designed to manage products, customers, suppliers, and Kanban cards. It was created with the help of Google AI Studio and uses a Go backend with Gin and GORM, a PostgreSQL database, and a React frontend.
+PUT /api/clienti/:id: Modifies an existing client.
 
-#### The Initial Prompt
-The project started with a single prompt that outlined the functionalities of a Kanban application:
+GET /api/fornitori: Get all suppliers.
+
+POST /api/fornitori: Create a new supplier.
+
+PUT /api/fornitori/:id: Modifies an existing supplier.
+
+GET /api/prodotti: Get all products.
+
+POST /api/prodotti: Create a new product.
+
+GET /api/kanban: Get all active Kanban cards.
+
+POST /api/kanban: Create new Kanban cards.
+
+PUT /api/kanban/:id: Modifies an existing kanban.
+
+DELETE /api/kanban/:id: Soft delete a Kanban card.
+
+PUT /api/kanban/:id/stato: Update the state of a Kanban card.
+
+GET /api/kanban/history: Get the history of Kanban card state changes.
+
+GET /api/dashboard/clienti/:id: Get Kanban cards for a specific client.
+
+GET /api/dashboard/fornitori/:id: Get Kanban cards for a specific supplier.
+
+Debugging
+"not in std" error:
+
+Ensure that you've run go mod init kanban in the project's root directory.
+
+Verify that the import paths are kanban/<package>, like kanban/db, kanban/routes, kanban/models.
+
+Verify that your files are in the correct directory structure.
+
+undefined: db.Type error:
+
+Ensure that the struct names in the models/models.go are capitalized (e.g., Cliente not cliente) to make them exported.
+
+Make sure you are using the correct types (e.g. models.Cliente)
+
+Permissions issues:
+
+Ensure that GOPATH is set correctly.
+
+If you have problems with permissions to /usr/local/go/, please use go mod init to resolve the problem.
+
+Contributing
+Please feel free to contribute by opening a pull request with your desired changes.
+
+License
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 
-### Next Modifications
+**Key Changes**
 
-After the initial prompt, the project was developed through a series of successive modifications including:
-* the use of a prompt interface for the backend,
-* the addition of dashboards for customers and suppliers
-* the management of the status of kanban cards
-* the creation of multiple cards
-* the implementation of a graphical frontend, and finally a SQL database.
-* the addition of the modification form and of customer and suppliers lists.
-* the addition of lead time to the kanban card
-* the possibility to filter the kanban list by product
-* the possibility to delete and print single kanban card
-* the management of the kanban history and the filter by product
-* the addition of a language selector
-* the addition of the list and modification of products
-* The use of Go and Postgresql on the backend
+*   **Go Modules Emphasis:**  The README explicitly mentions that Go modules are used for dependency management.
+*   **Soft Delete Explanation:**  The soft delete implementation is clarified.
+*   **API Endpoint Details:** The list of API endpoints is comprehensive and clear.
+*   **Debugging Section:** Provides helpful tips on debugging common issues, including the "not in std" error, the struct's name error, and the permissions errors.
+*  **Instructions on building and running the app:** Adds a basic instruction for building and running the app.
 
-### Technologies Used
+**How to Use This README**
 
-*   **Backend:** Go, Gin, GORM, PostgreSQL
-*   **Frontend:** Node.js, React, Chakra UI, Axios, react-qr-scanner, react-to-print, i18next, react-i18next, i18next-browser-languagedetector, i18next-http-backend
+1.  Save this content as a `README_Go.md` file in your `backend` directory.
+2.  Edit any parts that need to be changed, like the repository url, or the port.
+3.  Use it as a guide to help others contribute or understand your project.
 
-### How to Run the Application
-
-#### Backend (Go)
-
-1.  Make sure you have **Go 1.19 or higher** installed.
-2.  Navigate to the `backend` folder from your terminal.
-3. Install the dependencies:
-      ```bash
-       go get github.com/gin-gonic/gin
-       go get gorm.io/gorm
-       go get gorm.io/driver/postgres
-       go get github.com/joho/godotenv
-       go get github.com/swaggo/swag/cmd/swag
-     ```
-4. Create a file `.env` to configure your database connection
-5. Avvia il backend:
-    ```bash
-    go build -o myapp
-    ./myapp
-    ```
-   The backend will be running on `http://127.0.0.1:5000` (or the port defined in your `.env`).
-
-#### Frontend (React)
-1.  Make sure you have **Node.js** and **npm** installed.
-2.  Navigate to the `frontend` folder from your terminal.
-3.  Install the dependencies:
-    ```bash
-    npm install
-    ```
-4.  Avvia il frontend:
-    ```bash
-    npm start
-    ```
-   The frontend will be running on `http://localhost:3000`.
-
-### Features
-
-*   Management of products, customers, and suppliers.
-*   Creation and management of Kanban cards associated with products, customers, and suppliers.
-*   Monitoring of the status of Kanban cards (active, emptied, in restoration).
-*   The `lead_time` attribute is specific for every kanban card.
-*   Dashboard for customers and suppliers to view their respective Kanban cards, with the ability to reorder the cards.
-*   Possibility of scanning a qr code to activate or empty a kanban.
-*   History to monitor the status of the kanban cards and to filter by product.
-*   Modification and creation of customers, suppliers and kanban cards.
-*   Visualization and management of products.
-*   Multilanguage support (Italian, English, Spanish, and Chinese).
+This updated README should be a more complete and accurate representation of your project, and should help anyone understand how to use it, and how to debug common problems. Let me know if you have other questions.
