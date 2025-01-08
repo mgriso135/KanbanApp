@@ -129,7 +129,7 @@ const ClienteDashboard = () => {
                           <Heading size="md" mb={2}>{prodottoCodice}</Heading>
                           <Flex wrap="wrap">
                               {groupedKanban[prodottoCodice].map((kanban) => (
-                                <KanbanCard key={kanban.id} kanban={kanban}>
+                                <KanbanCard key={kanban.id} kanban={kanban} showQrCode={true}>
                                     {kanban.stato === 'Attivo' &&
                                       <Button colorScheme="red" onClick={() => handleSvuotaKanban(kanban.id)} >{t('empty')}</Button>
                                     }

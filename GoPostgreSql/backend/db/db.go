@@ -1,28 +1,54 @@
-package db
+ // db/db.go
+ package db
 
-import (
+ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
+	"time"
+	"kanban/models"
 
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-)
+	"gorm.io/gorm/logger"
+ )
 
-var DB *gorm.DB
+ var DB *gorm.DB
+ var conf Config
 
-func ConnectDB() {
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_NAME"),
-		os.Getenv("DB_PORT"),
+ type Config struct {
+	DbHost     string
+	DbUser     string
+	DbPassword string
+	DbName     string
+	DbPort     string
+ }
+
+ func ConnectDB() {
+	loadEnv()
+
+	newLogger := logger.New(
+		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
+		logger.Config{
+			SlowThreshold: time.Second, // Slow SQL threshold
+			LogLevel:      logger.Info, // Log level
+			Colorful:      true,        // Disable color
+		},
 	)
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	dbPort, err := strconv.Atoi(conf.DbPort)
 	if err != nil {
-		log.Fatalf("failed to connect to database: %v", err)
+		panic(err)
+	}
+
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable", conf.DbHost, conf.DbUser, conf.DbPassword, conf.DbName, dbPort)
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: newLogger,
+	})
+	if err != nil {
+		panic("failed to connect database")
 	}
 
 	log.Println("Connected to Database")
@@ -33,4 +59,21 @@ func ConnectDB() {
 	if err != nil {
 		log.Fatalf("failed to migrate database: %v", err)
 	}
-}
+ }
+ func loadEnv() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
+	conf = Config{
+		DbHost:     os.Getenv("DB_HOST"),
+		DbUser:     os.Getenv("DB_USER"),
+		DbPassword: os.Getenv("DB_PASSWORD"),
+		DbName:     os.Getenv("DB_NAME"),
+		DbPort:     os.Getenv("DB_PORT"),
+	}
+	if conf.DbPort == "" {
+		conf.DbPort = "5432"
+	}
+ }

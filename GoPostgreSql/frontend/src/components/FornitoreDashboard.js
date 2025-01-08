@@ -132,7 +132,7 @@ const FornitoreDashboard = () => {
                              <Heading size="md" mb={2}>{prodottoCodice}</Heading>
                             <Flex wrap="wrap" >
                               {groupedKanban[prodottoCodice].map((kanban) => (
-                                    <KanbanCard key={kanban.id} kanban={kanban}>
+                                    <KanbanCard key={kanban.id} kanban={kanban} showQrCode={true}>
                                         {kanban.stato === 'Svuotato' &&
                                         <Button colorScheme="green" onClick={() => handleAttivaKanban(kanban.id)}>{t('activate')}</Button>
                                         }
