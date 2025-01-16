@@ -345,12 +345,14 @@ func updateKanbanChainStatus(c *gin.Context) {
 		return
 	}
 	var kanbanChainStatus models.KanbanChainStatus
-	if err := db.DB.Where("kanban_status_id = ? and kanban_chain_id = ?", id, payload.KanbanChainID).First(&kanbanChainStatus).Error; err == nil {
+	if err := db.DB.Where("kanban_status_id = ? AND kanban_chain_id = ?", id, payload.KanbanChainID).First(&kanbanChainStatus).Error; err == nil {
 		kanbanChainStatus.Order = payload.Order
 		kanbanChainStatus.Name = payload.Name
 		db.DB.Save(&kanbanChainStatus)
+		c.JSON(http.StatusOK, gin.H{"message": "Kanban Status modified successfully!"})
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Kanban Chain Status not found"})
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Kanban Status modified successfully!"})
 }
 
 func modificaKanbanStatusChain(c *gin.Context) {

@@ -67,7 +67,7 @@ const useApi = () => {
 
 
 const KanbanStatusChainForm = () => {
-    
+    console.log("KanbanStatusChainForm rendered");
     const { kanbanStatusChainId } = useParams();
     const [chainName, setChainName] = useState('');
     const [availableStatuses, setAvailableStatuses] = useState([]);
@@ -151,9 +151,8 @@ const KanbanStatusChainForm = () => {
                const linkedStatusesData = await apiRequest('Caricamento linked kanban statuses', '/api/kanban-status', 'get', { kanban_chain_id: kanbanStatusChainId});
                 setLinkedStatuses(linkedStatusesData);
                  setSelectedStatus('');
-                 console.log("Everything ok");
         } catch (error) {
-          console.log("Error: ", error);
+
         }
     };
 
@@ -179,20 +178,27 @@ const KanbanStatusChainForm = () => {
        };
 
 
-    const handleUpdateStatusOrder = async (kanbanStatusId) => {
+       const handleUpdateStatusOrder = async (kanbanStatusId) => {
         try {
+          const kanbanStatus = linkedStatuses.find(linked => linked.id === parseInt(kanbanStatusId,10));
+          let name = "";
+            if(kanbanStatus && kanbanStatus.kanban_chain_statuses) {
+                const chainStatus = kanbanStatus.kanban_chain_statuses.find(item => item.kanban_status_id === parseInt(kanbanStatusId,10))
+                if(chainStatus){
+                    name = chainStatus.name;
+                }
+            }
           await apiRequest('Aggiornamento ordine kanban status',`/api/kanban-chain-status/${kanbanStatusId}`, 'put', {
-                kanban_chain_id: parseInt(kanbanStatusChainId, 10),
-                order: statusOrder[kanbanStatusId]
-            });
-
-            const linkedStatusesData = await apiRequest('Caricamento linked kanban statuses', '/api/kanban-status', 'get', { kanban_chain_id: kanbanStatusChainId});
-           setLinkedStatuses(linkedStatusesData);
-
-        } catch (error) {
-
-        }
-    };
+                order: statusOrder[kanbanStatusId],
+                name: name + "A"
+             });
+           const linkedStatusesData = await apiRequest('Caricamento linked kanban statuses', '/api/kanban-status', 'get', { kanban_chain_id: kanbanStatusChainId});
+          setLinkedStatuses(linkedStatusesData);
+     
+      } catch (error) {
+     console.log(error);
+      }
+     };
 
 
     return (
