@@ -25,6 +25,13 @@ import KanbanList from './KanbanList';
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from './LanguageSelector';
 import ProductList from './ProductList';
+import KanbanChainList from './KanbanChainList';
+import KanbanChainForm from './KanbanChainForm';
+import KanbanStatusList from './KanbanStatusList';
+import KanbanStatusForm from './KanbanStatusForm';
+import KanbanChainStatusManagement from './KanbanChainStatusManagement';
+import KanbanStatusChainForm from './KanbanStatusChainForm';
+import KanbanStatusChainList from './KanbanStatusChainList';
 
 const NavBar = () => {
    const { t } = useTranslation();
@@ -49,6 +56,12 @@ const NavBar = () => {
                   <MenuItem as={Link} to="/fornitori-list" bg="gray.700">
                    Gestione Fornitori
                   </MenuItem>
+                   <MenuItem as={Link} to="/kanban-chain-list" bg="gray.700">
+                      Gestione Kanban Chain
+                   </MenuItem>
+                  <MenuItem as={Link} to="/kanban-status-list" bg="gray.700">
+                        Gestione Kanban Status
+                  </MenuItem>
                   <MenuItem as={Link} to="/aggiungi-prodotto" bg="gray.700">
                     Prodotto
                   </MenuItem>
@@ -61,6 +74,9 @@ const NavBar = () => {
                   <MenuItem as={Link} to="/kanban-history" bg="gray.700">
                     {t('kanbanHistory')}
                   </MenuItem>
+                  <MenuItem as={Link} to="/kanban-status-chain-list" bg="gray.700">
+                     Gestione Kanban Status Chain
+                   </MenuItem>
                 </MenuList>
               </Menu>
             </Flex>
@@ -82,6 +98,19 @@ const NavBar = () => {
             <Route path="/fornitori-list" element={<FornitoriList />} />
              <Route path="/kanban-list" element={<KanbanList />} />
             <Route path="/prodotti-list" element={<ProductList />} />
+             <Route path="/kanban-chain-list" element={<KanbanChainList />} />
+             <Route path="/aggiungi-kanban-chain" element={<KanbanChainForm />} />
+             <Route path="/aggiungi-kanban-chain/:kanbanChainId" element={<KanbanChainForm />} />
+              <Route path="/kanban-status-list" element={<KanbanStatusList />} />
+             <Route path="/aggiungi-kanban-status" element={<KanbanStatusForm />} />
+                <Route path="/aggiungi-kanban-status/:kanbanStatusId" element={<KanbanStatusForm />} />
+                 <Route path="/aggiungi-kanban-status/:kanbanChainId" element={<KanbanStatusForm />} />
+                <Route path="/aggiungi-kanban-status/:kanbanStatusId/:kanbanChainId" element={<KanbanStatusForm />} />
+                <Route path="/kanban-chain-status-management/:kanbanChainId" element={<KanbanChainStatusManagement />} />
+              <Route path="/aggiungi-kanban-status-chain" element={<KanbanStatusChainForm />} />
+              <Route path="/aggiungi-kanban-status-chain/:kanbanStatusChainId" element={<KanbanStatusChainForm />} />
+           <Route path="/kanban-status-chain-list" element={<KanbanStatusChainList />} />
+
         </Routes>
       </Router>
   );

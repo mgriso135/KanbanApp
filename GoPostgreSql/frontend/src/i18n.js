@@ -9,7 +9,11 @@ i18n
 .init({
   lng: 'en',
   fallbackLng: 'en',
-  debug: true,
+  debug: false, // set to false to mute all console logs
+    missingKeyHandler: (lng, ns, key) => {
+       // You can log missing keys here if needed, or just mute them
+      // console.warn(`i18next: Missing key "${key}" in namespace "${ns}" for language "${lng}".`);
+    },
     resources: {
         en: {
         translation: {

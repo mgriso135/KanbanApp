@@ -44,7 +44,7 @@ const FornitoreDashboard = () => {
      useEffect(() => {
         // Raggruppa i cartellini per codice prodotto e riordina
         const grouped = kanbanList.reduce((acc, kanban) => {
-            const prodottoCodice = kanban.prodotto?.descrizione;
+            const prodottoCodice = kanban.kanban_chain?.prodotto?.descrizione;
             if (!acc[prodottoCodice]) {
                 acc[prodottoCodice] = [];
             }
@@ -132,10 +132,7 @@ const FornitoreDashboard = () => {
                              <Heading size="md" mb={2}>{prodottoCodice}</Heading>
                             <Flex wrap="wrap" >
                               {groupedKanban[prodottoCodice].map((kanban) => (
-                                    <KanbanCard key={kanban.id} kanban={kanban} showQrCode={true}>
-                                        {kanban.stato === 'Svuotato' &&
-                                        <Button colorScheme="green" onClick={() => handleAttivaKanban(kanban.id)}>{t('activate')}</Button>
-                                        }
+                                    <KanbanCard key={kanban.id} kanban={kanban} showQrCode={true} dashboard="supplier">
                                     </KanbanCard>
                                 ))
                               }

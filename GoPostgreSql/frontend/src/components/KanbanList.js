@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-    Box,
-    Heading,
-    Button,
-    useToast,
-    Table,
-    Thead,
-    Tbody,
-    Tr,
-    Th,
-    Td,
-    Flex,
-    Spacer,
-    Select
+Box,
+Heading,
+Button,
+useToast,
+Table,
+Thead,
+Tbody,
+Tr,
+Th,
+Td,
+Flex,
+Spacer
 } from '@chakra-ui/react';
 import axios from '../utils/axiosConfig';
 import { useReactToPrint } from 'react-to-print';
@@ -21,24 +20,23 @@ import { useTranslation } from 'react-i18next';
 
 const KanbanList = () => {
     const [kanbanList, setKanbanList] = useState([]);
-    const [prodotti, setProdotti] = useState([]);
-    const [selectedProdotto, setSelectedProdotto] = useState('');
     const toast = useToast();
     const componentRef = useRef();
     const { t } = useTranslation();
 
     const handlePrintSingle = useReactToPrint({
         content:  () => componentRef.current
-     });
+    });
 
     useEffect(() => {
         const fetchKanban = async () => {
+            console.log("Fetching kanban data...");
             try {
                 const response = await axios.get('/api/kanban');
+                 console.log("Kanban data received:", response.data);
                 setKanbanList(response.data.filter(kanban => kanban.stato === 'Attivo' && kanban.is_active));
-                 const prodottiResult = await axios.get('/api/prodotti');
-                setProdotti(prodottiResult.data);
             } catch (error) {
+               console.error("Error fetching Kanban data:", error)
                toast({
                     title: 'Errore durante il caricamento dei kanban',
                      description: 'Si è verificato un errore durante il caricamento della lista dei kanban.',
@@ -64,39 +62,47 @@ const KanbanList = () => {
                    duration: 3000,
                     isClosable: true,
                });
-            } catch (error) {
-               toast({
-                   title: 'Errore durante l\'eliminazione del kanban',
-                  description: 'Si è verificato un errore durante l\'eliminazione del kanban.',
-                    status: 'error',
-                   duration: 5000,
-                   isClosable: true,
-               });
-         }
+           } catch (error) {
+              toast({
+                  title: 'Errore durante l\'eliminazione del kanban',
+                 description: 'Si è verificato un errore durante l\'eliminazione del kanban.',
+                  status: 'error',
+                 duration: 5000,
+                 isClosable: true,
+             });
+        }
      };
 
-     const filteredKanbanList = selectedProdotto
-        ? kanbanList.filter(kanban => kanban.prodotto?.descrizione === selectedProdotto)
-        : kanbanList;
-
+     const handleRecalculateKanban = async () => {
+            try {
+                await axios.post('/api/kanban/recalculate');
+                const response = await axios.get('/api/kanban');
+                setKanbanList(response.data.filter(kanban => kanban.stato === 'Attivo' && kanban.is_active));
+                toast({
+                    title: 'Kanban ricalcolato',
+                    status: 'success',
+                    duration: 3000,
+                    isClosable: true,
+                });
+            } catch (error) {
+                toast({
+                    title: 'Errore durante il ricalcolo del kanban',
+                    description: 'Si è verificato un errore durante il ricalcolo del kanban.',
+                    status: 'error',
+                    duration: 5000,
+                    isClosable: true,
+                });
+            }
+        };
 
     return (
         <Box p={4}>
           <Flex mb={4} align="center">
               <Heading>{t('kanbanList')}</Heading>
                 <Spacer/>
+				<Button onClick={handleRecalculateKanban} colorScheme="teal" mr={2}>Ricalcola Kanban</Button>
           </Flex>
-           <Flex mb={4} align="center">
-               <Box mr={2}>
-                   <Heading size="md">Filtra per prodotto:</Heading>
-                    <Select placeholder={t('selectProduct')} value={selectedProdotto} onChange={(e) => setSelectedProdotto(e.target.value)}>
-                        {prodotti.map((prodotto) => (
-                            <option key={prodotto.codice_prodotto} value={prodotto.descrizione}>{prodotto.descrizione}</option>
-                        ))}
-                    </Select>
-                </Box>
-             </Flex>
-          <Box overflowX="auto">
+           <Box overflowX="auto">
             <Table variant="striped" colorScheme="gray">
               <Thead>
                <Tr>
@@ -104,23 +110,23 @@ const KanbanList = () => {
                     <Th>{t('product')}</Th>
                     <Th>{t('customer')}</Th>
                    <Th>{t('provider')}</Th>
-                    <Th>{t('quantity')}</Th>
-                    <Th>{t('type')}</Th>
-                    <Th>{t('leadTime')}</Th>
-                     <Th>Rimuovi</Th>
-                     <Th>Stampa</Th>
+                     <Th>{t('quantity')}</Th>
+                       <Th>{t('type')}</Th>
+                     <Th>{t('leadTime')}</Th>
+                       <Th>Rimuovi</Th>
+                       <Th>Stampa</Th>
                </Tr>
               </Thead>
                 <Tbody>
-                {filteredKanbanList.map((kanban) => (
+                {kanbanList.map((kanban) => (
                     <Tr key={kanban.id}>
                       <Td>{kanban.id}</Td>
-                      <Td>{kanban.prodotto?.descrizione}</Td>
-                        <Td>{kanban.cliente?.ragione_sociale}</Td>
-                        <Td>{kanban.fornitore?.ragione_sociale}</Td>
-                         <Td>{kanban.quantita}</Td>
-                        <Td>{kanban.tipo_contenitore}</Td>
-                         <Td>{kanban.leadTime}</Td>
+                      <Td>{kanban.kanban_chain?.prodotto?.descrizione}</Td>
+                        <Td>{kanban.kanban_chain?.cliente?.ragione_sociale}</Td>
+                        <Td>{kanban.kanban_chain?.fornitore?.ragione_sociale}</Td>
+                         <Td>{kanban.kanban_chain?.quantita}</Td>
+                        <Td>{kanban.kanban_chain?.tipo_contenitore}</Td>
+                        <Td>{kanban.kanban_chain?.lead_time}</Td>
                         <Td>
                           <Button size="sm" colorScheme="red" onClick={() => handleEliminaKanban(kanban.id)}>Rimuovi</Button>
                         </Td>
@@ -134,9 +140,9 @@ const KanbanList = () => {
            </Box>
             <div style={{ display: 'none' }}>
                 <div ref={componentRef}>
-                  {filteredKanbanList.map((kanban) => (
+                  {kanbanList.map((kanban) => (
                        <div key={kanban.id} id={`kanban-${kanban.id}`}>
-                         <KanbanCard  kanban={kanban} showQrCode={true}/>
+                         <KanbanCard  kanban={kanban} showQrCode={true} dashboard="none"/>
                         </div>
                    ))}
                </div>
