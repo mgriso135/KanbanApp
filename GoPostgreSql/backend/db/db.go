@@ -1,32 +1,32 @@
- // db/db.go
- package db
+// db/db.go
+package db
 
- import (
+import (
 	"fmt"
+	"kanban/models"
 	"log"
 	"os"
 	"strconv"
 	"time"
-	"kanban/models"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
- )
+)
 
- var DB *gorm.DB
- var conf Config
+var DB *gorm.DB
+var conf Config
 
- type Config struct {
+type Config struct {
 	DbHost     string
 	DbUser     string
 	DbPassword string
 	DbName     string
 	DbPort     string
- }
+}
 
- func ConnectDB() {
+func ConnectDB() {
 	loadEnv()
 
 	newLogger := logger.New(
@@ -55,12 +55,13 @@
 	DB = db
 
 	//Migrate the database
-	err = DB.AutoMigrate(&models.Cliente{}, &models.Fornitore{}, &models.Prodotto{}, &models.Kanban{}, &models.KanbanHistory{})
+	err = DB.AutoMigrate(&models.Cliente{}, &models.Fornitore{}, &models.Prodotto{}, &models.Kanban{}, &models.KanbanHistory{}, &models.KanbanChain{}, &models.KanbanStatus{}, &models.KanbanChainStatus{}, &models.KanbanStatusChain{})
 	if err != nil {
 		log.Fatalf("failed to migrate database: %v", err)
 	}
- }
- func loadEnv() {
+
+}
+func loadEnv() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatalf("Error loading .env file")
@@ -76,4 +77,4 @@
 	if conf.DbPort == "" {
 		conf.DbPort = "5432"
 	}
- }
+}
