@@ -1,2 +1,4 @@
 /GoPostgreSql/frontend/node_modules
 /GoPostgreSql/frontend/node_modules/.cache
+/GoPostgreSql/frontend/node_modules/.cache/default-development
+/GoPostgreSql/frontend/node_modules/.cache/default-development/0.pack
