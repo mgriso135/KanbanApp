@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"kanban/db"
 	"kanban/models"
+	"log" // Import the log package
 	"net/http"
 	"time"
 
@@ -335,6 +336,7 @@ func createKanbanChainStatus(c *gin.Context) {
 
 func updateKanbanChainStatus(c *gin.Context) {
 	id := c.Param("id")
+	fmt.Println("updateKanbanChainStatus - ID from URL:", id) // Log id from URL
 	var payload struct {
 		KanbanChainID uint   `json:"kanban_chain_id"`
 		Order         int    `json:"order"`
@@ -344,15 +346,27 @@ func updateKanbanChainStatus(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	fmt.Println("updateKanbanChainStatus - Payload:", payload) // Log payload
 	var kanbanChainStatus models.KanbanChainStatus
-	if err := db.DB.Where("kanban_status_id = ? AND kanban_chain_id = ?", id, payload.KanbanChainID).First(&kanbanChainStatus).Error; err == nil {
-		kanbanChainStatus.Order = payload.Order
-		kanbanChainStatus.Name = payload.Name
-		db.DB.Save(&kanbanChainStatus)
-		c.JSON(http.StatusOK, gin.H{"message": "Kanban Status modified successfully!"})
-	} else {
+	query := db.DB.Where("kanban_status_id = ? AND kanban_chain_id = ?", id, payload.KanbanChainID).First(&kanbanChainStatus)
+
+	if err := query.Error; err != nil {
+		log.Printf("Error finding KanbanChainStatus: %v", err) // Log db error
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Kanban Chain Status not found"})
+		return
 	}
+
+	kanbanChainStatus.Order = payload.Order
+	kanbanChainStatus.Name = payload.Name
+
+	result := db.DB.Save(&kanbanChainStatus)
+	if result.Error != nil {
+		log.Printf("Error saving KanbanChainStatus: %v", result.Error) // Log save error
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update Kanban Chain Status"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Kanban Status modified successfully!"})
 }
 
 func modificaKanbanStatusChain(c *gin.Context) {
